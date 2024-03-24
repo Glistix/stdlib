@@ -61,6 +61,7 @@ pub fn compile(
 
 @external(erlang, "gleam_stdlib", "compile_regex")
 @external(javascript, "../gleam_stdlib.mjs", "compile_regex")
+@external(nix, "../gleam_stdlib.nix", "unimplemented2")
 fn do_compile(a: String, with with: Options) -> Result(Regex, CompileError)
 
 /// Creates a new `Regex`.
@@ -111,6 +112,7 @@ pub fn check(with regex: Regex, content content: String) -> Bool {
 
 @external(erlang, "gleam_stdlib", "regex_check")
 @external(javascript, "../gleam_stdlib.mjs", "regex_check")
+@external(nix, "../gleam_stdlib.nix", "unimplemented2")
 fn do_check(a: Regex, b: String) -> Bool
 
 /// Splits a string.
@@ -135,6 +137,10 @@ fn do_split(a: Regex, b: String) -> List(String)
 fn do_split(regex, string) -> List(String) {
   js_split(string, regex)
 }
+
+@target(nix)
+@external(nix, "../gleam_stdlib.nix", "unimplemented2")
+fn do_split(a: Regex, b: String) -> List(String)
 
 @target(javascript)
 @external(javascript, "../gleam_stdlib.mjs", "split")
@@ -198,4 +204,5 @@ pub fn scan(with regex: Regex, content string: String) -> List(Match) {
 
 @external(erlang, "gleam_stdlib", "regex_scan")
 @external(javascript, "../gleam_stdlib.mjs", "regex_scan")
+@external(nix, "../gleam_stdlib.nix", "unimplemented2")
 fn do_scan(a: Regex, b: String) -> List(Match)

@@ -8,12 +8,14 @@ import gleam/string
 ///
 @external(erlang, "gleam_stdlib", "identity")
 @external(javascript, "../gleam_stdlib.mjs", "bit_array_from_string")
+@external(nix, "../gleam_stdlib.nix", "unimplemented")
 pub fn from_string(x: String) -> BitArray
 
 /// Returns an integer which is the number of bytes in the bit array.
 ///
 @external(erlang, "erlang", "byte_size")
 @external(javascript, "../gleam_stdlib.mjs", "length")
+@external(nix, "../gleam_stdlib.nix", "unimplemented")
 pub fn byte_size(x: BitArray) -> Int
 
 /// Creates a new bit array by joining two bit arrays.
@@ -39,6 +41,7 @@ pub fn append(to first: BitArray, suffix second: BitArray) -> BitArray {
 ///
 @external(erlang, "gleam_stdlib", "bit_array_slice")
 @external(javascript, "../gleam_stdlib.mjs", "bit_array_slice")
+@external(nix, "../gleam_stdlib.nix", "unimplemented3")
 pub fn slice(
   from string: BitArray,
   at position: Int,
@@ -68,6 +71,10 @@ fn do_is_utf8(bits: BitArray) -> Bool {
   }
 }
 
+@target(nix)
+@external(nix, "../gleam_stdlib.nix", "unimplemented")
+fn do_is_utf8(bits: BitArray) -> Bool
+
 /// Converts a bit array to a string.
 ///
 /// Returns an error if the bit array is invalid UTF-8 data.
@@ -92,6 +99,10 @@ fn do_to_string(bits: BitArray) -> Result(String, Nil) {
 @external(javascript, "../gleam_stdlib.mjs", "bit_array_to_string")
 fn do_to_string(a: BitArray) -> Result(String, Nil)
 
+@target(nix)
+@external(nix, "../gleam_stdlib.nix", "unimplemented")
+fn do_to_string(a: BitArray) -> Result(String, Nil)
+
 /// Creates a new bit array by joining multiple binaries.
 ///
 /// ## Examples
@@ -103,6 +114,7 @@ fn do_to_string(a: BitArray) -> Result(String, Nil)
 ///
 @external(erlang, "gleam_stdlib", "bit_array_concat")
 @external(javascript, "../gleam_stdlib.mjs", "bit_array_concat")
+@external(nix, "../gleam_stdlib.nix", "unimplemented")
 pub fn concat(bit_arrays: List(BitArray)) -> BitArray
 
 /// Encodes a BitArray into a base 64 encoded string.
@@ -117,6 +129,7 @@ pub fn base64_encode(input: BitArray, padding: Bool) -> String {
 
 @external(erlang, "base64", "encode")
 @external(javascript, "../gleam_stdlib.mjs", "encode64")
+@external(nix, "../gleam_stdlib.nix", "unimplemented")
 fn encode64(a: BitArray) -> String
 
 /// Decodes a base 64 encoded string into a `BitArray`.
@@ -131,6 +144,7 @@ pub fn base64_decode(encoded: String) -> Result(BitArray, Nil) {
 
 @external(erlang, "gleam_stdlib", "base_decode64")
 @external(javascript, "../gleam_stdlib.mjs", "decode64")
+@external(nix, "../gleam_stdlib.nix", "unimplemented")
 fn decode64(a: String) -> Result(BitArray, Nil)
 
 /// Encodes a `BitArray` into a base 64 encoded string with URL and filename safe alphabet.
@@ -152,10 +166,12 @@ pub fn base64_url_decode(encoded: String) -> Result(BitArray, Nil) {
 
 @external(erlang, "binary", "encode_hex")
 @external(javascript, "../gleam_stdlib.mjs", "base16_encode")
+@external(nix, "../gleam_stdlib.nix", "unimplemented")
 pub fn base16_encode(input: BitArray) -> String
 
 @external(erlang, "gleam_stdlib", "base16_decode")
 @external(javascript, "../gleam_stdlib.mjs", "base16_decode")
+@external(nix, "../gleam_stdlib.nix", "unimplemented")
 pub fn base16_decode(input: String) -> Result(BitArray, Nil)
 
 @target(javascript)
@@ -178,6 +194,10 @@ pub fn inspect(input: BitArray) -> String
 pub fn inspect(input: BitArray) -> String {
   do_inspect(input, "<<") <> ">>"
 }
+
+@target(nix)
+@external(nix, "../gleam_stdlib.nix", "unimplemented")
+pub fn inspect(input: BitArray) -> String
 
 @target(erlang)
 fn do_inspect(input: BitArray, accumulator: String) -> String {

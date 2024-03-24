@@ -33,6 +33,7 @@ pub type Dict(key, value)
 ///
 @external(erlang, "maps", "size")
 @external(javascript, "../gleam_stdlib.mjs", "map_size")
+@external(nix, "../gleam_stdlib.nix", "unimplemented")
 pub fn size(dict: Dict(k, v)) -> Int
 
 /// Converts the dict to a list of 2-element tuples `#(key, value)`, one for
@@ -54,6 +55,7 @@ pub fn size(dict: Dict(k, v)) -> Int
 ///
 @external(erlang, "maps", "to_list")
 @external(javascript, "../gleam_stdlib.mjs", "map_to_list")
+@external(nix, "../gleam_stdlib.nix", "unimplemented")
 pub fn to_list(dict: Dict(key, value)) -> List(#(key, value))
 
 /// Converts a list of 2-element tuples `#(key, value)` to a dict.
@@ -107,6 +109,7 @@ pub fn new() -> Dict(key, value) {
 
 @external(erlang, "maps", "new")
 @external(javascript, "../gleam_stdlib.mjs", "new_map")
+@external(nix, "../gleam_stdlib.nix", "unimplemented0")
 fn do_new() -> Dict(key, value)
 
 /// Fetches a value from a dict for a given key.
@@ -132,6 +135,7 @@ pub fn get(from: Dict(key, value), get: key) -> Result(value, Nil) {
 
 @external(erlang, "gleam_stdlib", "map_get")
 @external(javascript, "../gleam_stdlib.mjs", "map_get")
+@external(nix, "../gleam_stdlib.nix", "unimplemented2")
 fn do_get(a: Dict(key, value), b: key) -> Result(value, Nil)
 
 /// Inserts a value into the dict with the given key.
@@ -157,6 +161,7 @@ pub fn insert(into dict: Dict(k, v), for key: k, insert value: v) -> Dict(k, v) 
 
 @external(erlang, "maps", "put")
 @external(javascript, "../gleam_stdlib.mjs", "map_insert")
+@external(nix, "../gleam_stdlib.nix", "unimplemented3")
 fn do_insert(a: key, b: value, c: Dict(key, value)) -> Dict(key, value)
 
 /// Updates all values in a given dict by calling a given function on each key
@@ -387,6 +392,7 @@ pub fn delete(from dict: Dict(k, v), delete key: k) -> Dict(k, v) {
 
 @external(erlang, "maps", "remove")
 @external(javascript, "../gleam_stdlib.mjs", "map_remove")
+@external(nix, "../gleam_stdlib.nix", "unimplemented2")
 fn do_delete(a: k, b: Dict(k, v)) -> Dict(k, v)
 
 /// Creates a new dict from a given dict with all the same entries except any with

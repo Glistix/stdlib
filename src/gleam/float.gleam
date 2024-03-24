@@ -35,6 +35,7 @@ pub fn parse(string: String) -> Result(Float, Nil) {
 
 @external(erlang, "gleam_stdlib", "parse_float")
 @external(javascript, "../gleam_stdlib.mjs", "parse_float")
+@external(nix, "../gleam_stdlib.nix", "parse_float")
 fn do_parse(a: String) -> Result(Float, Nil)
 
 /// Returns the string representation of the provided `Float`.
@@ -52,6 +53,7 @@ pub fn to_string(x: Float) -> String {
 
 @external(erlang, "gleam_stdlib", "float_to_string")
 @external(javascript, "../gleam_stdlib.mjs", "float_to_string")
+@external(nix, "../gleam_stdlib.nix", "float_to_string")
 fn do_to_string(a: Float) -> String
 
 /// Restricts a `Float` between a lower and upper bound.
@@ -202,6 +204,7 @@ pub fn ceiling(x: Float) -> Float {
 
 @external(erlang, "math", "ceil")
 @external(javascript, "../gleam_stdlib.mjs", "ceiling")
+@external(nix, "../gleam_stdlib.nix", "ceiling")
 fn do_ceiling(a: Float) -> Float
 
 /// Rounds the value to the next lowest whole number as a `Float`.
@@ -219,6 +222,7 @@ pub fn floor(x: Float) -> Float {
 
 @external(erlang, "math", "floor")
 @external(javascript, "../gleam_stdlib.mjs", "floor")
+@external(nix, "../gleam_stdlib.nix", "floor")
 fn do_floor(a: Float) -> Float
 
 /// Rounds the value to the nearest whole number as an `Int`.
@@ -251,6 +255,10 @@ fn do_round(x: Float) -> Int {
   }
 }
 
+@target(nix)
+@external(nix, "../gleam_stdlib.nix", "round")
+fn do_round(a: Float) -> Int
+
 @target(javascript)
 @external(javascript, "../gleam_stdlib.mjs", "round")
 fn js_round(a: Float) -> Int
@@ -270,6 +278,7 @@ pub fn truncate(x: Float) -> Int {
 
 @external(erlang, "erlang", "trunc")
 @external(javascript, "../gleam_stdlib.mjs", "truncate")
+@external(nix, "../gleam_stdlib.nix", "truncate")
 fn do_truncate(a: Float) -> Int
 
 /// Returns the absolute value of the input as a `Float`.
@@ -339,6 +348,7 @@ pub fn power(base: Float, of exponent: Float) -> Result(Float, Nil) {
 
 @external(erlang, "math", "pow")
 @external(javascript, "../gleam_stdlib.mjs", "power")
+@external(nix, "../gleam_stdlib.nix", "unimplemented2")
 fn do_power(a: Float, b: Float) -> Float
 
 /// Returns the square root of the input as a `Float`.
@@ -431,6 +441,7 @@ fn do_product(numbers: List(Float), initial: Float) -> Float {
 ///
 @external(erlang, "rand", "uniform")
 @external(javascript, "../gleam_stdlib.mjs", "random_uniform")
+@external(nix, "../gleam_stdlib.nix", "unimplemented0")
 pub fn random() -> Float
 
 /// Returns division of the inputs as a `Result`.

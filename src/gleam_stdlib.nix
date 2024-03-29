@@ -1,5 +1,5 @@
 let
-  inherit (builtins.import ./gleam.nix) Ok Error toList prepend bitArrayByteSize toBitArray;
+  inherit (builtins.import ./gleam.nix) Ok Error toList bitArrayByteSize toBitArray isOk listIsEmpty;
   inherit (builtins.import ./gleam/dynamic.nix) DecodeError;
 
   Nil = null;
@@ -148,13 +148,13 @@ let
     data:
       if
         builtins.isAttrs data &&
-        data ? "__gleam_tag'" &&
+        data ? __gleamTag &&
         (
-          data.__gleam_tag' == "Ok" ||
-          data.__gleam_tag' == "Error"
+          data.__gleamTag == "Ok" ||
+          data.__gleamTag == "Error"
         ) &&
-        data ? "_0"
-      then if data.__gleam_tag' == "Ok" then Ok (Ok data._0) else Ok (Error data._0)
+        data ? _0
+      then if isOk data then Ok (Ok data._0) else Ok (Error data._0)
       else decoder_error "Result" data;
 
   inspect =
@@ -186,7 +186,7 @@ let
 
   add = a: b: a + b;
 
-  concat = l: if l.__gleam_tag' == "Empty" then "" else l.head + concat l.tail;
+  concat = l: if l.__gleamTag == "Empty" then "" else l.head + concat l.tail;
 
   length = builtins.stringLength;
 
@@ -208,7 +208,7 @@ let
 
   byte_size = bitArrayByteSize;
 
-  list_to_mapped_nix_list = f: l: if l.__gleam_tag' == "Empty" then [] else [ (f l.head) ] ++ list_to_mapped_nix_list f l.tail;
+  list_to_mapped_nix_list = f: l: if listIsEmpty l then [] else [ (f l.head) ] ++ list_to_mapped_nix_list f l.tail;
 
   bit_array_concat = arrays: toBitArray (list_to_mapped_nix_list (a: a.buffer) arrays);
 

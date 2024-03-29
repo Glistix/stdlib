@@ -1,5 +1,5 @@
 let
-  inherit (builtins.import ./gleam.nix) Ok Error toList prepend;
+  inherit (builtins.import ./gleam.nix) Ok Error toList prepend bitArrayByteSize toBitArray;
   inherit (builtins.import ./gleam/dynamic.nix) DecodeError;
 
   Nil = null;
@@ -181,6 +181,13 @@ let
 
   ends_with = haystack: needle: essentials.hasSuffix needle haystack;
 
+  byte_size = bitArrayByteSize;
+
+  list_to_mapped_nix_list = f: l: if l.__gleam_tag' == "Empty" then [] else [ (f l.head) ] ++ list_to_mapped_nix_list f l.tail;
+
+  bit_array_concat = arrays: toBitArray (list_to_mapped_nix_list (a: a.buffer) arrays);
+
+  bit_array_inspect = array: "<<${builtins.concatStringsSep ", " (map builtins.toString array.buffer)}>>";
 in
   {
     inherit
@@ -220,5 +227,8 @@ in
       less_than
       contains_string
       starts_with
-      ends_with;
+      ends_with
+      byte_size
+      bit_array_concat
+      bit_array_inspect;
   }

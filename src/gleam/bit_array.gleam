@@ -15,7 +15,7 @@ pub fn from_string(x: String) -> BitArray
 ///
 @external(erlang, "erlang", "byte_size")
 @external(javascript, "../gleam_stdlib.mjs", "length")
-@external(nix, "../gleam_stdlib.nix", "unimplemented")
+@external(nix, "../gleam_stdlib.nix", "byte_size")
 pub fn byte_size(x: BitArray) -> Int
 
 /// Creates a new bit array by joining two bit arrays.
@@ -114,7 +114,7 @@ fn do_to_string(a: BitArray) -> Result(String, Nil)
 ///
 @external(erlang, "gleam_stdlib", "bit_array_concat")
 @external(javascript, "../gleam_stdlib.mjs", "bit_array_concat")
-@external(nix, "../gleam_stdlib.nix", "unimplemented")
+@external(nix, "../gleam_stdlib.nix", "bit_array_concat")
 pub fn concat(bit_arrays: List(BitArray)) -> BitArray
 
 /// Encodes a BitArray into a base 64 encoded string.
@@ -196,7 +196,7 @@ pub fn inspect(input: BitArray) -> String {
 }
 
 @target(nix)
-@external(nix, "../gleam_stdlib.nix", "unimplemented")
+@external(nix, "../gleam_stdlib.nix", "bit_array_inspect")
 pub fn inspect(input: BitArray) -> String
 
 @target(erlang)

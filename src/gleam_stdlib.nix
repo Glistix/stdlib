@@ -157,6 +157,31 @@ let
       then if data.__gleam_tag' == "Ok" then Ok (Ok data._0) else Ok (Error data._0)
       else decoder_error "Result" data;
 
+  inspect =
+    data:
+      if builtins.isInt data || builtins.isFloat data
+      then builtins.toString data
+      else if data == true then "True"
+      else if data == false then "False"
+      else if builtins.isNull data then "Nil"
+      else if builtins.isString data then builtins.toJSON data
+      else if builtins.isFunction data then "//fn(...) { ... }"
+      else if builtins.isList data then
+        let
+          inspected_list = map inspect data;
+          joined_inspected_list = builtins.concatStringsSep ", " inspected_list;
+        in "#(${joined_inspected_list})"
+      else if builtins.isPath data then "//nix(${builtins.toString data})"
+      else if builtins.isAttrs data then
+        let
+          attr_mapper =
+            a:
+              " ${a} = ${inspect data.${a}};";
+
+          attr_pairs = builtins.concatStringsSep "" (map attr_mapper (builtins.attrNames data));
+        in "//nix({${attr_pairs} })"
+      else "//nix(${builtins.toString data})";  # TODO: Detect built-in data types, tuples, etc.
+
   print = message: builtins.trace message null;
 
   add = a: b: a + b;
@@ -216,6 +241,7 @@ in
       decode_float
       decode_bool
       decode_result
+      inspect
       print
       add
       concat

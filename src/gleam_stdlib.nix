@@ -180,7 +180,7 @@ let
 
           attr_pairs = builtins.concatStringsSep "" (map attr_mapper (builtins.attrNames data));
         in "//nix({${attr_pairs} })"
-      else "//nix(${builtins.toString data})";  # TODO: Detect built-in data types, tuples, etc.
+      else "//nix(...)";  # TODO: Detect built-in data types, possibly others.
 
   print = message: builtins.trace message null;
 

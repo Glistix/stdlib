@@ -882,7 +882,7 @@ pub fn bitwise_exclusive_or(x: Int, y: Int) -> Int
 ///
 @external(erlang, "erlang", "bsl")
 @external(javascript, "../gleam_stdlib.mjs", "bitwise_shift_left")
-@external(nix, "../gleam_stdlib.nix", "unimplemented2")
+@external(nix, "../gleam_stdlib.nix", "bitwise_shift_left")
 pub fn bitwise_shift_left(x: Int, y: Int) -> Int
 
 /// Calculates the result of an arithmetic right bitshift.
@@ -893,5 +893,5 @@ pub fn bitwise_shift_left(x: Int, y: Int) -> Int
 ///
 @external(erlang, "erlang", "bsr")
 @external(javascript, "../gleam_stdlib.mjs", "bitwise_shift_right")
-@external(nix, "../gleam_stdlib.nix", "unimplemented2")
+@external(nix, "../gleam_stdlib.nix", "bitwise_shift_right")
 pub fn bitwise_shift_right(x: Int, y: Int) -> Int

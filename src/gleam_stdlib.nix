@@ -173,14 +173,82 @@ let
         in "#(${joined_inspected_list})"
       else if builtins.isPath data then "//nix(${builtins.toString data})"
       else if builtins.isAttrs data then
-        let
-          attr_mapper =
-            a:
-              " ${a} = ${inspect data.${a}};";
-
-          attr_pairs = builtins.concatStringsSep "" (map attr_mapper (builtins.attrNames data));
-        in "//nix({${attr_pairs} })"
+        if data.__gleamBuiltIn or null == "List"
+        then inspect_list data
+        else if data.__gleamBuiltIn or null == "BitArray"
+        then bit_array_inspect data
+        else if data ? __gleamTag
+        then inspect_record data
+        else inspect_attrs data
       else "//nix(...)";  # TODO: Detect built-in data types, possibly others.
+
+  inspect_attrs =
+    data:
+      let
+        attr_mapper =
+          a:
+            let
+              identifier_match = builtins.match "[a-zA-Z\_][a-zA-Z0-9\_\'\-]*";
+
+              escaped_attr_name = if identifier_match a == null then "\"${a}\"" else a;
+
+              # Stopgap for infinitely recursive attribute sets
+              # We could perhaps use a recursive call counter in the future
+              inspected_value =
+                let
+                  value = data.${a};
+                in if builtins.isAttrs value then "//nix({ ... })" else inspect value;
+            in " ${escaped_attr_name} = ${inspected_value};";
+
+        attr_pairs = builtins.concatStringsSep "" (map attr_mapper (builtins.attrNames data));
+      in "//nix({${attr_pairs} })";
+
+  inspect_list =
+    data:
+      "[${builtins.concatStringsSep ", " (list_to_mapped_nix_list inspect data)}]";
+
+  inspect_record =
+    data:
+      let
+        match_numeric_label = builtins.match "^_([[:digit:]]+)$";
+
+        # We sort numeric labels so they aren't sorted lexicographically,
+        # but rather the smallest number should come first.
+        # Additionally, non-numeric labels are pushed to the end.
+        label_comparator =
+          a: b:
+            let
+              numeric-match-a = match_numeric_label a;
+              numeric-match-b = match_numeric_label b;
+              parsed-int-a = builtins.fromJSON (builtins.head numeric-match-a);
+              parsed-int-b = builtins.fromJSON (builtins.head numeric-match-b);
+            in
+              if numeric-match-a != null && numeric-match-b != null
+              then parsed-int-a < parsed-int-b
+              else numeric-match-a != null;
+
+        # Map a label to a "label: value" string (or just "value" if numeric).
+        label_mapper =
+          label:
+            let
+              is-numeric = match_numeric_label label != null;
+              field = if is-numeric then "" else "${label}: ";
+              v = inspect data."${label}";
+            in field + v;
+
+        label_filter = label: label != "__gleamTag" && label != "__gleamBuiltIn";
+
+        label_value_pairs =
+          map
+            label_mapper
+            (builtins.sort label_comparator (builtins.filter label_filter (builtins.attrNames data)));
+
+        fields =
+          if label_value_pairs == []
+          then ""
+          else "(${builtins.concatStringsSep ", " label_value_pairs})";
+      in
+        "${data.__gleamTag}${fields}";
 
   print = message: builtins.trace message null;
 

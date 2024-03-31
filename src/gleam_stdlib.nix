@@ -26,6 +26,69 @@ let
           minus_sign = if int_sign == "+" then "" else int_sign;
         in if matched_int == null then Error Nil else Ok (builtins.fromJSON (minus_sign + int_digits));
 
+  ascii_char_at = n: s: builtins.substring n 1 s;
+
+  base_string = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+  # Maps indices to letters.
+  base_map = essentials.stringToCharacters base_string;
+
+  # Maps letters to indices.
+  base_reverse_map = builtins.listToAttrs
+    (builtins.genList
+      (i: { name = builtins.elemAt base_map i; value = i; } )
+      (builtins.length base_map));
+
+  # Assumes the base is between 2 and 36, inclusive.
+  int_from_base_string = string: base:
+    let
+      num_to_base_char = n: builtins.elemAt base_map n;
+      max_valid_digit = if base > 10 then 9 else base - 1;
+      max_valid_letter = if base > 10 then num_to_base_char (base - 1) else null;
+      digit_pattern = "0-${builtins.toString max_valid_digit}";
+      letter_pattern =
+        if base == 11
+        then "A"
+        else if max_valid_letter != null
+        then "A-${max_valid_letter}"
+        else "";
+      sign_factor = if ascii_char_at 0 string == "-" then -1 else 1;
+      valid_base_num_match = builtins.match "^[-+]?([${digit_pattern}${letter_pattern}]+)$";
+      matched_upper_string = valid_base_num_match (uppercase string);
+      upper_string_without_sign = builtins.head matched_upper_string;
+      initial_last_char = builtins.stringLength upper_string_without_sign - 1;
+    in
+      if string == "" || matched_upper_string == null
+      then Error Nil
+      else
+        Ok
+          (sign_factor *
+            do_int_from_base_string upper_string_without_sign base initial_last_char);
+
+  do_int_from_base_string = string: base: last_char_pos:
+    let
+      last_char = ascii_char_at last_char_pos string;
+      converted_first_chars =
+        if last_char_pos <= 0
+        then 0
+        else do_int_from_base_string string base (last_char_pos - 1);
+      converted_last_char = base_reverse_map.${last_char};
+    in base * converted_first_chars + converted_last_char;
+
+  int_to_base_string = value: base:
+    if value < 0
+    then "-${int_to_base_string (-value) base}"
+    else
+      let
+        last_digit = mod' value base;
+        first_digits = value / base;
+        converted_last_digit = builtins.elemAt base_map last_digit;
+        converted_first_digits =
+          if value < base
+          then ""
+          else int_to_base_string first_digits base;
+      in converted_first_digits + converted_last_digit;
+
   bitwise_and = builtins.bitAnd;
 
   bitwise_not = builtins.bitXor (-1);
@@ -306,6 +369,8 @@ in
       unimplemented3
       unimplemented4
       parse_int
+      int_from_base_string
+      int_to_base_string
       bitwise_and
       bitwise_not
       bitwise_or

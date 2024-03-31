@@ -144,7 +144,7 @@ pub fn base_parse(string: String, base: Int) -> Result(Int, Nil) {
 
 @external(erlang, "gleam_stdlib", "int_from_base_string")
 @external(javascript, "../gleam_stdlib.mjs", "int_from_base_string")
-@external(nix, "../gleam_stdlib.nix", "unimplemented2")
+@external(nix, "../gleam_stdlib.nix", "int_from_base_string")
 fn do_base_parse(a: String, b: Int) -> Result(Int, Nil)
 
 /// Prints a given int to a string.
@@ -211,7 +211,7 @@ pub fn to_base_string(x: Int, base: Int) -> Result(String, InvalidBase) {
 
 @external(erlang, "erlang", "integer_to_binary")
 @external(javascript, "../gleam_stdlib.mjs", "int_to_base_string")
-@external(nix, "../gleam_stdlib.nix", "unimplemented2")
+@external(nix, "../gleam_stdlib.nix", "int_to_base_string")
 fn do_to_base_string(a: Int, b: Int) -> String
 
 /// Prints a given int to a string using base-2.

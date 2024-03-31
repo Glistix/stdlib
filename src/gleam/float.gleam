@@ -305,6 +305,10 @@ pub fn absolute_value(x: Float) -> Float {
 /// Returns the results of the base being raised to the power of the
 /// exponent, as a `Float`.
 ///
+/// ## Warning
+///
+/// The Nix target does not support fractional exponents yet.
+///
 /// ## Examples
 ///
 /// ```gleam
@@ -348,7 +352,7 @@ pub fn power(base: Float, of exponent: Float) -> Result(Float, Nil) {
 
 @external(erlang, "math", "pow")
 @external(javascript, "../gleam_stdlib.mjs", "power")
-@external(nix, "../gleam_stdlib.nix", "unimplemented2")
+@external(nix, "../gleam_stdlib.nix", "power")
 fn do_power(a: Float, b: Float) -> Float
 
 /// Returns the square root of the input as a `Float`.
@@ -432,6 +436,13 @@ fn do_product(numbers: List(Float), initial: Float) -> Float {
 /// On Erlang this updates the random state in the process dictionary.
 /// See: <https://www.erlang.org/doc/man/rand.html#uniform-0>
 ///
+/// ## Warning
+///
+/// On the Nix target, this function will always return the same value,
+/// as Nix does not have global variables, and so the call to `random()`
+/// will always have the same seed. Consider using a library with seeded
+/// random for a proper implementation of randomness.
+///
 /// ## Examples
 ///
 /// ```gleam
@@ -441,7 +452,7 @@ fn do_product(numbers: List(Float), initial: Float) -> Float {
 ///
 @external(erlang, "rand", "uniform")
 @external(javascript, "../gleam_stdlib.mjs", "random_uniform")
-@external(nix, "../gleam_stdlib.nix", "unimplemented0")
+@external(nix, "../gleam_stdlib.nix", "random_uniform")
 pub fn random() -> Float
 
 /// Returns division of the inputs as a `Result`.

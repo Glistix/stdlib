@@ -34,6 +34,10 @@ let
 
   bitwise_exclusive_or = builtins.bitXor;
 
+  bitwise_shift_left = x: n: if n <= 0 then x else bitwise_shift_left (x * 2) (n - 1);
+
+  bitwise_shift_right = x: n: if n <= 0 then x else bitwise_shift_right (x / 2) (n - 1);
+
   parse_float =
     let
       float_without_leading_zero_match = builtins.match "^([-+]?)0*([[:digit:]]+)\\.([[:digit:]]+)$";
@@ -118,6 +122,17 @@ let
     let
       f = div' n d;
     in n - f * d;
+
+  # TODO: Properly accept fractional exponents.
+  power = x: n:
+    if builtins.floor n == 0
+    then 1
+    else if n < 0
+    then power (1 / x) (-n)
+    else x * power x (n - 1);
+
+  # No global seed to change, so there isn't much we can do.
+  random_uniform = {}: 0.646355926896028;
 
   classify_dynamic = d:
     if builtins.isInt d then "Int"
@@ -295,6 +310,8 @@ in
       bitwise_not
       bitwise_or
       bitwise_exclusive_or
+      bitwise_shift_left
+      bitwise_shift_right
       parse_float
       to_string
       float_to_string
@@ -303,6 +320,8 @@ in
       round
       truncate
       to_float
+      power
+      random_uniform
       classify_dynamic
       decode_string
       decode_int

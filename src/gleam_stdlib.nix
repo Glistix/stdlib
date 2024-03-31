@@ -6,7 +6,7 @@ let
 
   identity = x: x;
 
-  unimplemented0 = throw "Unimplemented";
+  unimplemented0 = {}: throw "Unimplemented";
   unimplemented = _: throw "Unimplemented";
   unimplemented2 = _: _: throw "Unimplemented";
   unimplemented3 = _: _: _: throw "Unimplemented";

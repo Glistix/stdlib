@@ -5,6 +5,7 @@ let
       Error
       UtfCodepoint
       toList
+      prepend
       bitArrayByteSize
       toBitArray
       isOk
@@ -445,12 +446,12 @@ let
           cursorCodepoint = string_to_codepoint cursorUtfChar;
         in
           if cursorByte == ""
-          then []
-          else [ cursorCodepoint ] ++ string_to_codepoint_integer_list_aux s (cursor + amountBytes);
+          then toList []
+          else prepend cursorCodepoint (string_to_codepoint_integer_list_aux s (cursor + amountBytes));
 
   string_to_codepoint_integer_list =
     s:
-      toList (string_to_codepoint_integer_list_aux s 0);
+      string_to_codepoint_integer_list_aux s 0;
 
   utf_codepoint_list_to_string =
     l:

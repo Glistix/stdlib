@@ -1,5 +1,15 @@
 let
-  inherit (builtins.import ./gleam.nix) Ok Error toList bitArrayByteSize toBitArray isOk listIsEmpty;
+  inherit
+    (builtins.import ./gleam.nix)
+      Ok
+      Error
+      UtfCodepoint
+      toList
+      bitArrayByteSize
+      toBitArray
+      isOk
+      listIsEmpty;
+
   inherit (builtins.import ./gleam/dynamic.nix) DecodeError;
 
   Nil = null;
@@ -352,6 +362,98 @@ let
 
   ends_with = haystack: needle: essentials.hasSuffix needle haystack;
 
+  # --- codepoint code ---
+
+  utf_codepoint_to_int = codepoint: codepoint.value;
+
+  codepoint = UtfCodepoint;
+
+  dec_to_hex = i: int_to_base_string i 16;
+
+  int_codepoint_to_string =
+    n:
+      let
+        hex = dec_to_hex n;
+        zeroes = builtins.substring 0 (8 - (builtins.stringLength hex)) "00000000";
+      in (builtins.fromTOML "x = \"\\U${zeroes}${hex}\"").x;
+
+  # Performs a binary search of the given string among all possible codepoints.
+  #
+  # This is possible since strings are comparable, and codepoints
+  # with a larger numeric value, when represented as strings (UTF-8 bytes),
+  # compare larger than strings of codepoints of smaller value.
+  # Therefore, if the string compares larger than the character
+  # corresponding to the codepoint halfway through the range,
+  # the string will be somewhere at the upper half of the codepoint
+  # range; otherwise, at the lower half. If the string is equal to the character
+  # at the half of the range, its codepoint value is returned, as it was found.
+  #
+  # When the string is not a valid codepoint, returns 0.
+  string_to_codepoint_aux = let
+      minInvalidChar = 55296; # 0xd800
+      maxInvalidChar = 57343; # 0xdfff - codepoints in this range are invalid
+    in s: min: max:
+      let
+        half = ((max + min) / 2);
+        # Skip invalid codepoint range
+        fixedHalf = if half >= minInvalidChar && half <= maxInvalidChar then maxInvalidChar + 1 else half;
+        beforeHalf = if fixedHalf == maxInvalidChar + 1 then minInvalidChar - 1 else fixedHalf - 1;
+        halfChar = int_codepoint_to_string fixedHalf;
+      in
+        if min > max
+        then 0 # string isn't a valid UTF-8 codepoint
+        else if s == halfChar
+        then fixedHalf
+        else if s > halfChar
+        then string_to_codepoint_aux s (fixedHalf + 1) max
+        else string_to_codepoint_aux s min beforeHalf;
+
+  # Converts a string with a single codepoint to an integer.
+  string_to_codepoint =
+    let
+      # TODO: Control search range depending on string length
+      maxChar = 1114111;  # 0x10ffff
+    in s:
+      string_to_codepoint_aux s 0 maxChar;
+
+  # TODO: Perhaps use genericClosure instead of list concatenation
+  string_to_codepoint_integer_list_aux =
+    let
+      firstCh = builtins.substring 0 1;
+      last1Byte = 127;  # 0x007f
+      last2Bytes = 2047;  # 0x07ff
+      last3Bytes = 65535;  # 0xffff
+      last1ByteFirstCh = firstCh (int_codepoint_to_string last1Byte);
+      last2BytesFirstCh = firstCh (int_codepoint_to_string last2Bytes);
+      last3BytesFirstCh = firstCh (int_codepoint_to_string last3Bytes);
+    in
+      s: cursor:
+        let
+          cursorByte = ascii_char_at cursor s;
+
+          # The codepoint at the cursor might be represented using 1 to 4 bytes,
+          # depending on the first byte's range.
+          amountBytes =
+            if cursorByte <= last1ByteFirstCh
+            then 1
+            else if cursorByte <= last2BytesFirstCh
+            then 2
+            else if cursorByte <= last3BytesFirstCh
+            then 3
+            else 4;
+          cursorUtfChar = builtins.substring cursor amountBytes s;
+          cursorCodepoint = string_to_codepoint cursorUtfChar;
+        in
+          if cursorByte == ""
+          then []
+          else [ cursorCodepoint ] ++ string_to_codepoint_integer_list_aux s (cursor + amountBytes);
+
+  string_to_codepoint_integer_list =
+    s:
+      toList (string_to_codepoint_integer_list_aux s 0);
+
+  # --- bitarray code ---
+
   byte_size = bitArrayByteSize;
 
   list_to_mapped_nix_list = f: l: if listIsEmpty l then [] else [ (f l.head) ] ++ list_to_mapped_nix_list f l.tail;
@@ -406,6 +508,9 @@ in
       contains_string
       starts_with
       ends_with
+      utf_codepoint_to_int
+      codepoint
+      string_to_codepoint_integer_list
       byte_size
       bit_array_concat
       bit_array_inspect;

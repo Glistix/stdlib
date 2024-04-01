@@ -715,7 +715,7 @@ fn do_to_graphemes(string: String, acc: List(String)) -> List(String) {
 
 @external(erlang, "gleam_stdlib", "identity")
 @external(javascript, "../gleam_stdlib.mjs", "codepoint")
-@external(nix, "../gleam_stdlib.nix", "unimplemented")
+@external(nix, "../gleam_stdlib.nix", "codepoint")
 fn unsafe_int_to_utf_codepoint(a: Int) -> UtfCodepoint
 
 /// Converts a `String` to a `List` of `UtfCodepoint`.
@@ -773,13 +773,20 @@ fn do_to_utf_codepoints(string: String) -> List(UtfCodepoint) {
   |> list.map(unsafe_int_to_utf_codepoint)
 }
 
+@target(nix)
+fn do_to_utf_codepoints(string: String) -> List(UtfCodepoint) {
+  string
+  |> string_to_codepoint_integer_list
+  |> list.map(unsafe_int_to_utf_codepoint)
+}
+
 @target(javascript)
 @external(javascript, "../gleam_stdlib.mjs", "string_to_codepoint_integer_list")
 fn string_to_codepoint_integer_list(a: String) -> List(Int)
 
 @target(nix)
-@external(nix, "../gleam_stdlib.nix", "unimplemented")
-fn do_to_utf_codepoints(string: String) -> List(UtfCodepoint)
+@external(nix, "../gleam_stdlib.nix", "string_to_codepoint_integer_list")
+fn string_to_codepoint_integer_list(a: String) -> List(Int)
 
 /// Converts a `List` of `UtfCodepoint`s to a `String`.
 ///
@@ -831,7 +838,7 @@ pub fn utf_codepoint_to_int(cp: UtfCodepoint) -> Int {
 
 @external(erlang, "gleam_stdlib", "identity")
 @external(javascript, "../gleam_stdlib.mjs", "utf_codepoint_to_int")
-@external(nix, "../gleam_stdlib.nix", "unimplemented")
+@external(nix, "../gleam_stdlib.nix", "utf_codepoint_to_int")
 fn do_utf_codepoint_to_int(cp cp: UtfCodepoint) -> Int
 
 /// Converts a `String` into `Option(String)` where an empty `String` becomes

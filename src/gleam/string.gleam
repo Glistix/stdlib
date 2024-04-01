@@ -609,7 +609,7 @@ fn erl_trim(a: String, b: Direction) -> String
 fn do_trim(string string: String) -> String
 
 @target(nix)
-@external(nix, "../gleam_stdlib.nix", "unimplemented")
+@external(nix, "../gleam_stdlib.nix", "trim")
 fn do_trim(string string: String) -> String
 
 /// Removes whitespace on the left of a `String`.
@@ -635,7 +635,7 @@ fn do_trim_left(string: String) -> String {
 fn do_trim_left(string string: String) -> String
 
 @target(nix)
-@external(nix, "../gleam_stdlib.nix", "unimplemented")
+@external(nix, "../gleam_stdlib.nix", "trim_left")
 fn do_trim_left(string string: String) -> String
 
 /// Removes whitespace on the right of a `String`.
@@ -661,7 +661,7 @@ fn do_trim_right(string: String) -> String {
 fn do_trim_right(string string: String) -> String
 
 @target(nix)
-@external(nix, "../gleam_stdlib.nix", "unimplemented")
+@external(nix, "../gleam_stdlib.nix", "trim_right")
 fn do_trim_right(string string: String) -> String
 
 /// Splits a non-empty `String` into its first element (head) and rest (tail).

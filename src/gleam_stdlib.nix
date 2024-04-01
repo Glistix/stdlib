@@ -363,6 +363,22 @@ let
 
   ends_with = haystack: needle: essentials.hasSuffix needle haystack;
 
+  trim = s:
+    let
+      matched = builtins.match "^[[:space:]]*(([[:space:]]|[^[:space:]])*[^[:space:]])[[:space:]]*$" s;
+      # When it doesn't match, there are no non-whitespace characters.
+      result = if matched == null then "" else builtins.head matched;
+    in result;
+
+  trim_left = s: builtins.head (builtins.match "^[[:space:]]*(([[:space:]]|[^[:space:]])*)$" s);
+
+  trim_right = s:
+    let
+      matched = builtins.match "^(([[:space:]]|[^[:space:]])*[^[:space:]])[[:space:]]*$" s;
+      # When it doesn't match, there are no non-whitespace characters.
+      result = if matched == null then "" else builtins.head matched;
+    in result;
+
   # --- codepoint code ---
 
   utf_codepoint_to_int = codepoint: codepoint.value;
@@ -535,6 +551,9 @@ in
       contains_string
       starts_with
       ends_with
+      trim
+      trim_left
+      trim_right
       utf_codepoint_to_int
       codepoint
       string_to_codepoint_integer_list

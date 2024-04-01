@@ -806,7 +806,7 @@ fn string_to_codepoint_integer_list(a: String) -> List(Int)
 ///
 @external(erlang, "gleam_stdlib", "utf_codepoint_list_to_string")
 @external(javascript, "../gleam_stdlib.mjs", "utf_codepoint_list_to_string")
-@external(nix, "../gleam_stdlib.nix", "unimplemented")
+@external(nix, "../gleam_stdlib.nix", "utf_codepoint_list_to_string")
 pub fn from_utf_codepoints(utf_codepoints: List(UtfCodepoint)) -> String
 
 /// Converts an integer to a `UtfCodepoint`.

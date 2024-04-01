@@ -452,6 +452,16 @@ let
     s:
       toList (string_to_codepoint_integer_list_aux s 0);
 
+  utf_codepoint_list_to_string =
+    l:
+      let
+        codepoint_at_head = utf_codepoint_to_int l.head;
+        converted_head = int_codepoint_to_string codepoint_at_head;
+      in
+        if listIsEmpty l
+        then ""
+        else converted_head + utf_codepoint_list_to_string l.tail;
+
   # --- bitarray code ---
 
   byte_size = bitArrayByteSize;
@@ -511,6 +521,7 @@ in
       utf_codepoint_to_int
       codepoint
       string_to_codepoint_integer_list
+      utf_codepoint_list_to_string
       byte_size
       bit_array_concat
       bit_array_inspect;

@@ -412,10 +412,26 @@ let
   # Converts a string with a single codepoint to an integer.
   string_to_codepoint =
     let
-      # TODO: Control search range depending on string length
+      maxCharWith1Byte = 127;  # 0x007f
+      maxCharWith2Bytes = 2047;  # 0x07ff
+      maxCharWith3Bytes = 65535;  # 0xffff
       maxChar = 1114111;  # 0x10ffff
     in s:
-      string_to_codepoint_aux s 0 maxChar;
+      let
+        len = builtins.stringLength s;
+        # The string's amount of bytes determines its codepoint range.
+        minMax =
+          if len == 1
+          then [ 0 maxCharWith1Byte ]
+          else if len == 2
+          then [ (maxCharWith1Byte + 1) maxCharWith2Bytes ]
+          else if len == 3
+          then [ (maxCharWith2Bytes + 1) maxCharWith3Bytes ]
+          else [ (maxCharWith3Bytes + 1) maxChar ];
+
+        min = builtins.head minMax;
+        max = builtins.elemAt minMax 1;
+      in string_to_codepoint_aux s min max;
 
   # TODO: Perhaps use genericClosure instead of list concatenation
   string_to_codepoint_integer_list_aux =

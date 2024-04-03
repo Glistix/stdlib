@@ -30,6 +30,11 @@ pub fn is_empty(str: String) -> Bool {
 /// This function has to iterate across the whole string to count the number of
 /// graphemes, so it runs in linear time.
 ///
+/// ## Warning
+///
+/// Currently, in the Nix target, this will return the number of codepoints
+/// instead, as grapheme splitting wasn't implemented yet.
+///
 /// ## Examples
 ///
 /// ```gleam
@@ -53,7 +58,7 @@ pub fn length(string: String) -> Int {
 
 @external(erlang, "string", "length")
 @external(javascript, "../gleam_stdlib.mjs", "string_length")
-@external(nix, "../gleam_stdlib.nix", "unimplemented")
+@external(nix, "../gleam_stdlib.nix", "string_length")
 fn do_length(a: String) -> Int
 
 /// Reverses a `String`.
@@ -263,7 +268,7 @@ fn do_slice(string: String, idx: Int, len: Int) -> String {
 ///
 @external(erlang, "gleam_stdlib", "crop_string")
 @external(javascript, "../gleam_stdlib.mjs", "crop_string")
-@external(nix, "../gleam_stdlib.nix", "unimplemented2")
+@external(nix, "../gleam_stdlib.nix", "crop_string")
 pub fn crop(from string: String, before substring: String) -> String
 
 /// Drops *n* graphemes from the left side of a `String`.
@@ -421,7 +426,7 @@ fn do_split_once(
 ) -> Result(#(String, String), Nil)
 
 @target(nix)
-@external(nix, "../gleam_stdlib.nix", "unimplemented2")
+@external(nix, "../gleam_stdlib.nix", "split_once")
 fn do_split_once(
   x x: String,
   substring substring: String,
@@ -671,6 +676,11 @@ fn do_trim_right(string string: String) -> String
 /// be slower than using `to_graphemes` due to string slicing being more
 /// expensive on JavaScript than Erlang.
 ///
+/// ## Warning
+///
+/// Currently, in the Nix target, this will split on the first codepoint
+/// instead, as grapheme splitting wasn't implemented yet.
+///
 /// ## Examples
 ///
 /// ```gleam
@@ -689,11 +699,18 @@ pub fn pop_grapheme(string: String) -> Result(#(String, String), Nil) {
 
 @external(erlang, "gleam_stdlib", "string_pop_grapheme")
 @external(javascript, "../gleam_stdlib.mjs", "pop_grapheme")
-@external(nix, "../gleam_stdlib.nix", "unimplemented")
+@external(nix, "../gleam_stdlib.nix", "string_pop_first_codepoint")
 fn do_pop_grapheme(string string: String) -> Result(#(String, String), Nil)
 
 /// Converts a `String` to a list of
 /// [graphemes](https://en.wikipedia.org/wiki/Grapheme).
+///
+/// ## Warning
+///
+/// Currently, in the Nix target, this will return the number of codepoints
+/// instead, as grapheme splitting wasn't implemented yet.
+///
+/// ## Examples
 ///
 /// ```gleam
 /// to_graphemes("abc")
@@ -701,6 +718,7 @@ fn do_pop_grapheme(string string: String) -> Result(#(String, String), Nil)
 /// ```
 ///
 @external(javascript, "../gleam_stdlib.mjs", "graphemes")
+@external(nix, "../gleam_stdlib.nix", "string_to_codepoint_strings")
 pub fn to_graphemes(string: String) -> List(String) {
   do_to_graphemes(string, [])
   |> list.reverse
@@ -942,7 +960,7 @@ fn do_inspect(term term: anything) -> StringBuilder
 /// Returns the number of bytes in a `String`.
 ///
 /// This function runs in constant time on Erlang and in linear time on
-/// JavaScript.
+/// JavaScript and Nix.
 ///
 /// ## Examples
 ///

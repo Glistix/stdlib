@@ -437,11 +437,33 @@ let
 
   uppercase = essentials.toUpper;
 
-  split = string: pattern: essentials.splitString pattern string;
+  split = string: pattern: if pattern == "" then string_to_codepoint_strings string else essentials.splitString pattern string;
+
+  split_once = string: pattern:
+    let
+      escapedPattern = essentials.escapeRegex pattern;
+      splitResult = builtins.split "${escapedPattern}(([[:space:]]|[^[:space:]])+)$" string;
+      splitHead = builtins.head splitResult;
+      splitTail = builtins.head (builtins.elemAt splitResult 1);
+    in
+      if pattern == ""
+      then Ok [ "" string ]
+      else if builtins.length splitResult == 1
+      then Error Nil
+      else Ok [ splitHead splitTail ];
 
   string_replace = string: pattern: substitute: builtins.replaceStrings [pattern] [substitute] string;
 
   less_than = a: b: a < b;
+
+  crop_string =
+    string: substring:
+      let
+        splitOnceResult = split_once string substring;
+      in
+        if string == "" || !(isOk splitOnceResult)
+        then string
+        else substring + builtins.elemAt splitOnceResult._0 1;
 
   contains_string = haystack: needle: essentials.hasInfix needle haystack;
 
@@ -535,8 +557,16 @@ let
         max = builtins.elemAt minMax 1;
       in string_to_codepoint_aux s min max;
 
-  # TODO: Perhaps use genericClosure instead of list concatenation
-  string_to_codepoint_integer_list_aux =
+  # TODO: Consider using genericClosure somehow
+  string_to_codepoint_integer_list =
+    let
+      next = { codepoint, ... }: acc: prepend codepoint acc;
+      init = toList [];
+    in fold_string_codepoints { inherit next init; };
+
+  # Take the codepoint starting at the given location in the string.
+  # Also returns the amount of bytes in the codepoint.
+  string_pop_codepoint_at =
     let
       firstCh = builtins.substring 0 1;
       last1Byte = 127;  # 0x007f
@@ -553,7 +583,9 @@ let
           # The codepoint at the cursor might be represented using 1 to 4 bytes,
           # depending on the first byte's range.
           amountBytes =
-            if cursorByte <= last1ByteFirstCh
+            if cursorByte == ""
+            then 0
+            else if cursorByte <= last1ByteFirstCh
             then 1
             else if cursorByte <= last2BytesFirstCh
             then 2
@@ -561,15 +593,24 @@ let
             then 3
             else 4;
           cursorUtfChar = builtins.substring cursor amountBytes s;
-          cursorCodepoint = string_to_codepoint cursorUtfChar;
-        in
-          if cursorByte == ""
-          then toList []
-          else prepend cursorCodepoint (string_to_codepoint_integer_list_aux s (cursor + amountBytes));
+          cursorCodepoint =  if amountBytes == 0 then 0 else string_to_codepoint cursorUtfChar;
+        in { codepoint = cursorCodepoint; utfChar = cursorUtfChar; inherit amountBytes; };
 
-  string_to_codepoint_integer_list =
-    s:
-      string_to_codepoint_integer_list_aux s 0;
+  # Folds over a string's codepoints.
+  # The 'next' function combines the received codepoint with the accumulator to the right.
+  # The 'init' value is returned when the string is empty, or we reached the end of it.
+  fold_string_codepoints =
+    { next, init }: s:
+      let
+        recurse = cursor:
+          let
+            cursorCodepointData = string_pop_codepoint_at s cursor;
+            inherit (cursorCodepointData) amountBytes;
+          in
+            if amountBytes == 0
+            then init
+            else next cursorCodepointData (recurse (cursor + amountBytes));
+      in recurse 0;
 
   utf_codepoint_list_to_string =
     l:
@@ -580,6 +621,32 @@ let
         if listIsEmpty l
         then ""
         else converted_head + utf_codepoint_list_to_string l.tail;
+
+  # TODO: Count graphemes instead of codepoints.
+  string_length =
+    let
+      next = { amountBytes, ... }: acc: amountBytes + acc;
+      init = 0;
+    in fold_string_codepoints { inherit next init; };
+
+  # TODO: pop grapheme
+  string_pop_first_codepoint =
+    s:
+      let
+        codepointData = string_pop_codepoint_at s 0;
+        firstCodepoint = codepointData.utfChar;
+        restOfString = builtins.substring codepointData.amountBytes (-1) s;
+      in
+        if s == ""
+        then Error Nil
+        else Ok [ firstCodepoint restOfString ];
+
+  # TODO: graphemes
+  string_to_codepoint_strings =
+    let
+      next = { utfChar, ... }: acc: prepend utfChar acc;
+      init = toList [];
+    in fold_string_codepoints { inherit next init; };
 
   # --- bitarray code ---
 
@@ -644,8 +711,10 @@ in
       lowercase
       uppercase
       split
+      split_once
       string_replace
       less_than
+      crop_string
       contains_string
       starts_with
       ends_with
@@ -656,6 +725,9 @@ in
       codepoint
       string_to_codepoint_integer_list
       utf_codepoint_list_to_string
+      string_length
+      string_pop_first_codepoint
+      string_to_codepoint_strings
       byte_size
       bit_array_concat
       bit_array_inspect;

@@ -200,7 +200,7 @@ fn do_reverse(builder: StringBuilder) -> StringBuilder {
 fn do_to_graphemes(string string: String) -> List(String)
 
 @target(nix)
-@external(nix, "../gleam_stdlib.nix", "unimplemented")
+@external(nix, "../gleam_stdlib.nix", "string_to_codepoint_strings")
 fn do_to_graphemes(string string: String) -> List(String)
 
 /// Splits a builder on a given pattern into a list of builders.

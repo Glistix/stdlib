@@ -84,7 +84,7 @@ pub fn bit_array(from data: Dynamic) -> Result(BitArray, DecodeErrors) {
 
 @external(erlang, "gleam_stdlib", "decode_bit_array")
 @external(javascript, "../gleam_stdlib.mjs", "decode_bit_array")
-@external(nix, "../gleam_stdlib.nix", "unimplemented")
+@external(nix, "../gleam_stdlib.nix", "decode_bit_array")
 fn decode_bit_array(a: Dynamic) -> Result(BitArray, DecodeErrors)
 
 /// Checks to see whether a `Dynamic` value is a string, and returns that string if
@@ -251,7 +251,7 @@ pub fn shallow_list(from value: Dynamic) -> Result(List(Dynamic), DecodeErrors) 
 
 @external(erlang, "gleam_stdlib", "decode_list")
 @external(javascript, "../gleam_stdlib.mjs", "decode_list")
-@external(nix, "../gleam_stdlib.nix", "unimplemented")
+@external(nix, "../gleam_stdlib.nix", "decode_list")
 fn decode_list(a: Dynamic) -> Result(List(Dynamic), DecodeErrors)
 
 @external(erlang, "gleam_stdlib", "decode_result")
@@ -390,7 +390,7 @@ pub fn optional(of decode: Decoder(inner)) -> Decoder(Option(inner)) {
 
 @external(erlang, "gleam_stdlib", "decode_option")
 @external(javascript, "../gleam_stdlib.mjs", "decode_option")
-@external(nix, "../gleam_stdlib.nix", "unimplemented2")
+@external(nix, "../gleam_stdlib.nix", "decode_option")
 fn decode_optional(a: Dynamic, b: Decoder(a)) -> Result(Option(a), DecodeErrors)
 
 /// Checks to see if a `Dynamic` value is a map with a specific field, and returns
@@ -474,7 +474,7 @@ pub fn optional_field(
 
 @external(erlang, "gleam_stdlib", "decode_field")
 @external(javascript, "../gleam_stdlib.mjs", "decode_field")
-@external(nix, "../gleam_stdlib.nix", "unimplemented2")
+@external(nix, "../gleam_stdlib.nix", "decode_field")
 fn decode_field(a: Dynamic, b: name) -> Result(Option(Dynamic), DecodeErrors)
 
 /// Checks to see if a `Dynamic` value is a tuple large enough to have a certain
@@ -542,38 +542,38 @@ type UnknownTuple
 
 @external(erlang, "gleam_stdlib", "decode_tuple")
 @external(javascript, "../gleam_stdlib.mjs", "decode_tuple")
-@external(nix, "../gleam_stdlib.nix", "unimplemented")
+@external(nix, "../gleam_stdlib.nix", "decode_tuple")
 fn decode_tuple(a: Dynamic) -> Result(UnknownTuple, DecodeErrors)
 
 @external(erlang, "gleam_stdlib", "decode_tuple2")
 @external(javascript, "../gleam_stdlib.mjs", "decode_tuple2")
-@external(nix, "../gleam_stdlib.nix", "unimplemented")
+@external(nix, "../gleam_stdlib.nix", "decode_tuple2")
 fn decode_tuple2(a: Dynamic) -> Result(#(Dynamic, Dynamic), DecodeErrors)
 
 @external(erlang, "gleam_stdlib", "decode_tuple3")
 @external(javascript, "../gleam_stdlib.mjs", "decode_tuple3")
-@external(nix, "../gleam_stdlib.nix", "unimplemented")
+@external(nix, "../gleam_stdlib.nix", "decode_tuple3")
 fn decode_tuple3(
   a: Dynamic,
 ) -> Result(#(Dynamic, Dynamic, Dynamic), DecodeErrors)
 
 @external(erlang, "gleam_stdlib", "decode_tuple4")
 @external(javascript, "../gleam_stdlib.mjs", "decode_tuple4")
-@external(nix, "../gleam_stdlib.nix", "unimplemented")
+@external(nix, "../gleam_stdlib.nix", "decode_tuple4")
 fn decode_tuple4(
   a: Dynamic,
 ) -> Result(#(Dynamic, Dynamic, Dynamic, Dynamic), DecodeErrors)
 
 @external(erlang, "gleam_stdlib", "decode_tuple5")
 @external(javascript, "../gleam_stdlib.mjs", "decode_tuple5")
-@external(nix, "../gleam_stdlib.nix", "unimplemented")
+@external(nix, "../gleam_stdlib.nix", "decode_tuple5")
 fn decode_tuple5(
   a: Dynamic,
 ) -> Result(#(Dynamic, Dynamic, Dynamic, Dynamic, Dynamic), DecodeErrors)
 
 @external(erlang, "gleam_stdlib", "decode_tuple6")
 @external(javascript, "../gleam_stdlib.mjs", "decode_tuple6")
-@external(nix, "../gleam_stdlib.nix", "unimplemented")
+@external(nix, "../gleam_stdlib.nix", "decode_tuple6")
 fn decode_tuple6(
   a: Dynamic,
 ) -> Result(
@@ -583,12 +583,12 @@ fn decode_tuple6(
 
 @external(erlang, "gleam_stdlib", "tuple_get")
 @external(javascript, "../gleam_stdlib.mjs", "tuple_get")
-@external(nix, "../gleam_stdlib.nix", "unimplemented2")
+@external(nix, "../gleam_stdlib.nix", "tuple_get")
 fn tuple_get(a: UnknownTuple, b: Int) -> Result(Dynamic, DecodeErrors)
 
 @external(erlang, "gleam_stdlib", "size_of_tuple")
 @external(javascript, "../gleam_stdlib.mjs", "length")
-@external(nix, "../gleam_stdlib.nix", "unimplemented")
+@external(nix, "../gleam_stdlib.nix", "size_of_tuple")
 fn tuple_size(a: UnknownTuple) -> Int
 
 fn tuple_errors(

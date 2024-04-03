@@ -13,6 +13,8 @@ let
 
   inherit (builtins.import ./gleam/dynamic.nix) DecodeError;
 
+  inherit (builtins.import ./gleam/option.nix) Some None;
+
   Nil = null;
 
   identity = x: x;
@@ -232,6 +234,90 @@ let
   decode_float = data: if builtins.isFloat data then Ok data else decoder_error "Float" data;
 
   decode_bool = data: if builtins.isBool data then Ok data else decoder_error "Bool" data;
+
+  decode_bit_array =
+    data:
+      if data.__gleamBuiltIn or null == "BitArray"
+      then Ok data
+      else if builtins.isList data && builtins.all builtins.isInt data
+      then Ok (toBitArray data)
+      else decoder_error "BitArray" data;
+
+  decode_tuple = data: if builtins.isList data then Ok data else decoder_error "Tuple" data;
+
+  decode_tuple2 = decode_tupleN 2;
+  decode_tuple3 = decode_tupleN 3;
+  decode_tuple4 = decode_tupleN 4;
+  decode_tuple5 = decode_tupleN 5;
+  decode_tuple6 = decode_tupleN 6;
+  decode_tupleN = n: data:
+    let
+      data_as_decoded_list = decode_exact_len_list data n;
+    in
+      if builtins.isList data && builtins.length data == n
+      then Ok data
+      else if isOk data_as_decoded_list
+      then Ok data_as_decoded_list._0
+      else decoder_error "Tuple of ${n} elements" data;
+
+  decode_list =
+    data:
+      if builtins.isList data
+      then Ok (toList data)
+      else if data.__gleamBuiltIn or null == "List"
+      then Ok data
+      else decoder_error "List" data;
+
+  decode_exact_len_list =
+    data: n:
+      if data.__gleamBuiltIn or null != "List"
+      then Error Nil
+      else if n == 0
+      then if listIsEmpty data then Ok [] else Error Nil
+      else if listIsEmpty data
+      then Error Nil
+      else
+        let
+          decoded_tail = decode_exact_len_list data.tail (n - 1);
+        in
+          if isOk decoded_tail
+          then Ok ([ data.head ] ++ decoded_tail._0)
+          else Error Nil;
+
+  decode_option =
+    data: decoder:
+      if data == null || data.__gleamTag or null == "None"
+      then Ok None
+      else
+        let
+          innerData = if data.__gleamTag or null == "Some" then data._0 or data else data;
+          decoded = decoder innerData;
+        in if isOk decoded then Ok (Some decoded._0) else decoded;
+
+  decode_field =
+    data: originalName:
+      let
+        name = if builtins.isInt originalName then builtins.toString name else name;
+        not_a_map_error = decoder_error "Dict" data;
+      in
+        if builtins.isAttrs data
+        then
+          if !(builtins.isString name)
+          then Ok None
+          else if data ? ${name}
+          then Ok (Some data.${name})
+          else if (builtins.isInt originalName || builtins.match "^[[:digit:]]+$" name != null) && data ? "_${name}"
+          then Ok (Some data."_${name}") # heuristic to access positional fields of records
+          else Ok None
+        else not_a_map_error;
+
+  tuple_get =
+    data: index:
+      if index >= 0 && builtins.length data > index
+      then Ok (builtins.elemAt data index)
+      else Error Nil;
+
+  size_of_tuple = builtins.length;
 
   decode_result =
     data:
@@ -537,6 +623,18 @@ in
       decode_int
       decode_float
       decode_bool
+      decode_bit_array
+      decode_tuple
+      decode_tuple2
+      decode_tuple3
+      decode_tuple4
+      decode_tuple5
+      decode_tuple6
+      decode_list
+      decode_option
+      decode_field
+      tuple_get
+      size_of_tuple
       decode_result
       inspect
       print

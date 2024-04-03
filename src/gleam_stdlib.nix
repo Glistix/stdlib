@@ -6,7 +6,7 @@ let
       UtfCodepoint
       toList
       prepend
-      bitArrayByteSize
+      byteSize
       toBitArray
       isOk
       listIsEmpty;
@@ -497,7 +497,7 @@ let
 
   # --- bitarray code ---
 
-  byte_size = bitArrayByteSize;
+  byte_size = byteSize;
 
   list_to_mapped_nix_list = f: l: if listIsEmpty l then [] else [ (f l.head) ] ++ list_to_mapped_nix_list f l.tail;
 

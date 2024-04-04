@@ -15,6 +15,14 @@ let
 
   inherit (builtins.import ./gleam/option.nix) Some None;
 
+  inherit (builtins.import ./dict.nix)
+    new_map
+    map_size
+    map_get
+    map_insert
+    map_remove
+    map_to_list;
+
   Nil = null;
 
   identity = x: x;
@@ -352,6 +360,8 @@ let
         then inspect_list data
         else if data.__gleamBuiltIn or null == "BitArray"
         then bit_array_inspect data
+        else if data.__gleamTag or null == "Dict" && data ? _attrs && data ? _list
+        then inspect_dict data
         else if data ? __gleamTag
         then inspect_record data
         else inspect_attrs data
@@ -381,6 +391,10 @@ let
   inspect_list =
     data:
       "[${builtins.concatStringsSep ", " (list_to_mapped_nix_list inspect data)}]";
+
+  inspect_dict =
+    data:
+      "dict.from_list(${inspect_list (map_to_list data)})";
 
   inspect_record =
     data:
@@ -730,5 +744,11 @@ in
       string_to_codepoint_strings
       byte_size
       bit_array_concat
-      bit_array_inspect;
+      bit_array_inspect
+      new_map
+      map_size
+      map_get
+      map_insert
+      map_remove
+      map_to_list;
   }

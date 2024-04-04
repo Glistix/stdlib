@@ -2,6 +2,8 @@
 //// The matching algorithms of the library are based on the PCRE library, but not
 //// all of the PCRE library is interfaced and some parts of the library go beyond
 //// what PCRE offers. Currently PCRE version 8.40 (release date 2017-01-11) is used.
+////
+//// Note that POSIX ERE syntax is used for the Nix target instead of PCRE.
 
 import gleam/option.{type Option}
 
@@ -36,6 +38,18 @@ pub type Options {
 
 /// Creates a `Regex` with some additional options.
 ///
+/// ## Warning
+///
+/// In the Nix target, you need to use the POSIX ERE syntax for regex, which
+/// differs from other Gleam targets. This means you will need to specify
+/// different regexes for different targets, if they aren't compatible. For
+/// example, the usual escape sequences, such as `\s` and `\w`, do not exist
+/// in POSIX ERE syntax. Rather, you have to use character classes, such as
+/// `[[:space:]]` for `\s` or `[[:alnum:]_]` for `\w`.
+///
+/// Additionally, we currently cannot detect invalid regexes, so evaluation
+/// is aborted when the provided regex is invalid.
+///
 /// ## Examples
 ///
 /// ```gleam
@@ -61,10 +75,22 @@ pub fn compile(
 
 @external(erlang, "gleam_stdlib", "compile_regex")
 @external(javascript, "../gleam_stdlib.mjs", "compile_regex")
-@external(nix, "../gleam_stdlib.nix", "unimplemented2")
+@external(nix, "../gleam_stdlib.nix", "compile_regex")
 fn do_compile(a: String, with with: Options) -> Result(Regex, CompileError)
 
 /// Creates a new `Regex`.
+///
+/// ## Warning
+///
+/// In the Nix target, you need to use the POSIX ERE syntax for regex, which
+/// differs from other Gleam targets. This means you will need to specify
+/// different regexes for different targets, if they aren't compatible. For
+/// example, the usual escape sequences, such as `\s` and `\w`, do not exist
+/// in POSIX ERE syntax. Rather, you have to use character classes, such as
+/// `[[:space:]]` for `\s` or `[[:alnum:]_]` for `\w`.
+///
+/// Additionally, we currently cannot detect invalid regexes, so evaluation
+/// is aborted when the provided regex is invalid.
 ///
 /// ## Examples
 ///
@@ -112,7 +138,7 @@ pub fn check(with regex: Regex, content content: String) -> Bool {
 
 @external(erlang, "gleam_stdlib", "regex_check")
 @external(javascript, "../gleam_stdlib.mjs", "regex_check")
-@external(nix, "../gleam_stdlib.nix", "unimplemented2")
+@external(nix, "../gleam_stdlib.nix", "regex_check")
 fn do_check(a: Regex, b: String) -> Bool
 
 /// Splits a string.
@@ -139,7 +165,7 @@ fn do_split(regex, string) -> List(String) {
 }
 
 @target(nix)
-@external(nix, "../gleam_stdlib.nix", "unimplemented2")
+@external(nix, "../gleam_stdlib.nix", "regex_split")
 fn do_split(a: Regex, b: String) -> List(String)
 
 @target(javascript)
@@ -204,5 +230,5 @@ pub fn scan(with regex: Regex, content string: String) -> List(Match) {
 
 @external(erlang, "gleam_stdlib", "regex_scan")
 @external(javascript, "../gleam_stdlib.mjs", "regex_scan")
-@external(nix, "../gleam_stdlib.nix", "unimplemented2")
+@external(nix, "../gleam_stdlib.nix", "regex_scan")
 fn do_scan(a: Regex, b: String) -> List(Match)

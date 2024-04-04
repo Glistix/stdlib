@@ -15,6 +15,8 @@ let
 
   inherit (builtins.import ./gleam/option.nix) Some None;
 
+  inherit (builtins.import ./gleam/regex.nix) Match;
+
   inherit (builtins.import ./dict.nix)
     new_map
     map_size
@@ -157,6 +159,13 @@ let
       sep: s:
         let
           splits = builtins.filter builtins.isString (builtins.split (escapeRegex (toString sep)) (toString s));
+        in
+          map (addContextFrom s) splits;
+
+    splitStringWithRegex =
+      sep: s:
+        let
+          splits = builtins.filter builtins.isString (builtins.split (toString sep) (toString s));
         in
           map (addContextFrom s) splits;
 
@@ -662,6 +671,32 @@ let
       init = toList [];
     in fold_string_codepoints { inherit next init; };
 
+  # --- regex ---
+  Regex = expr: options: { __gleamTag = "Regex"; inherit expr options; };
+
+  # TODO: Validate the expression to some extent
+  # TODO: Normalize non-POSIX regexes into POSIX
+  compile_regex =
+    expr: options:
+      builtins.seq
+        (builtins.match expr "") # ensure program crashes early with bad regex
+        Ok (Regex expr options);
+
+  # TODO: Apply regex options
+  regex_check = regex: string: builtins.match regex.expr string != null;
+
+  regex_split = regex: string: essentials.splitStringWithRegex regex.expr string;
+
+  regex_scan =
+    regex: string:
+      let
+        matches = builtins.match regex.expr string;
+        submatches = builtins.map (m: if m == null then None else Some m) matches;
+      in
+        if builtins.isNull matches
+        then toList []
+        else toList [ (Match string (toList submatches)) ]; # Nix regexes always apply to the whole input
+
   # --- bitarray code ---
 
   byte_size = byteSize;
@@ -674,6 +709,7 @@ let
 in
   {
     inherit
+      Regex
       identity
       unimplemented0
       unimplemented
@@ -742,6 +778,10 @@ in
       string_length
       string_pop_first_codepoint
       string_to_codepoint_strings
+      compile_regex
+      regex_check
+      regex_split
+      regex_scan
       byte_size
       bit_array_concat
       bit_array_inspect

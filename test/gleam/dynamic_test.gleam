@@ -1505,10 +1505,6 @@ pub fn decode9_test() {
   )
 }
 
-type ClassifyAtom {
-  ClassifyAtom
-}
-
 pub fn classify_test() {
   dynamic.from(True)
   |> dynamic.classify

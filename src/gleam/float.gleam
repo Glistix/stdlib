@@ -255,13 +255,21 @@ fn do_round(x: Float) -> Int {
   }
 }
 
-@target(nix)
-@external(nix, "../gleam_stdlib.nix", "round")
-fn do_round(a: Float) -> Int
-
 @target(javascript)
 @external(javascript, "../gleam_stdlib.mjs", "round")
 fn js_round(a: Float) -> Int
+
+@target(nix)
+fn do_round(x: Float) -> Int {
+  case x >=. 0.0 {
+    True -> nix_round(x)
+    _ -> 0 - nix_round(negate(x))
+  }
+}
+
+@target(nix)
+@external(nix, "../gleam_stdlib.nix", "round")
+fn nix_round(a: Float) -> Int
 
 /// Returns the value as an `Int`, truncating all decimal digits.
 ///

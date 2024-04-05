@@ -204,7 +204,7 @@ let
       inc = if mod' f 1 >= 0.5 then 1 else 0;
     in int + inc;
 
-  truncate = f: div' f 1;
+  truncate = f: if f < 0.0 then -(div' (-f) 1) else div' f 1;
 
   to_float = i: 1.0 * i;
 

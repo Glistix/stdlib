@@ -683,19 +683,23 @@ let
         Ok (Regex expr options);
 
   # TODO: Apply regex options
-  regex_check = regex: string: builtins.match regex.expr string != null;
+  regex_check = regex: string: builtins.length (builtins.split regex.expr string) > 1;
 
   regex_split = regex: string: essentials.splitStringWithRegex regex.expr string;
 
   regex_scan =
     regex: string:
       let
-        matches = builtins.match regex.expr string;
-        submatches = builtins.map (m: if m == null then None else Some m) matches;
+        matchLists = builtins.filter builtins.isList (builtins.split "(${regex.expr})" string);
+        matchListToMatch =
+          submatches:
+            let
+              fullMatch = builtins.head submatches;
+              otherMatches = builtins.map (m: if m == null then None else Some m) (builtins.tail submatches);
+            in Match fullMatch (toList otherMatches);
+        matches = builtins.map matchListToMatch matchLists;
       in
-        if builtins.isNull matches
-        then toList []
-        else toList [ (Match string (toList submatches)) ]; # Nix regexes always apply to the whole input
+        toList matches;
 
   # --- bitarray code ---
 

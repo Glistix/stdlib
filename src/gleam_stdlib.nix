@@ -227,6 +227,13 @@ let
   # No global seed to change, so there isn't much we can do.
   random_uniform = {}: 0.646355926896028;
 
+  is_dict = d:
+    builtins.isAttrs d
+      && d.__gleamTag or null == "Dict"
+      && builtins.isAttrs (d._attrs or null)
+      && builtins.isList (d._list or null)
+      && builtins.attrNames d == [ "__gleamTag" "_attrs" "_list" ];
+
   classify_dynamic = d:
     if builtins.isInt d then "Int"
     else if builtins.isFloat d then "Float"
@@ -234,6 +241,15 @@ let
     else if builtins.isFunction d then "Function"
     else if builtins.isNull d then "Nil"
     else if builtins.isString d then "String"
+    else if builtins.isList d then "Tuple of ${builtins.toString (builtins.length d)} elements"
+    else if builtins.isAttrs d && d ? __gleamBuiltIn
+    then
+      if d.__gleamBuiltIn == "List"
+      then "List"
+      else if d.__gleamBuiltIn == "BitArray"
+      then "BitArray"
+      else "Some other type"
+    else if is_dict d then "Dict"
     else "Some other type";
 
   decoder_error =
@@ -242,7 +258,7 @@ let
 
   decoder_error_no_classify =
     expected: got:
-      Error (toList [DecodeError expected got (toList [])]);
+      Error (toList [(DecodeError expected got (toList []))]);
 
   decode_string = data: if builtins.isString data then Ok data else decoder_error "String" data;
 
@@ -275,7 +291,7 @@ let
       then Ok data
       else if isOk data_as_decoded_list
       then Ok data_as_decoded_list._0
-      else decoder_error "Tuple of ${n} elements" data;
+      else decoder_error "Tuple of ${builtins.toString n} elements" data;
 
   decode_list =
     data:
@@ -312,19 +328,27 @@ let
         in if isOk decoded then Ok (Some decoded._0) else decoded;
 
   decode_field =
-    data: originalName:
+    data: name:
       let
-        name = if builtins.isInt originalName then builtins.toString name else name;
+        string_name = builtins.toString name;
         not_a_map_error = decoder_error "Dict" data;
       in
-        if builtins.isAttrs data
+        if is_dict data
         then
-          if !(builtins.isString name)
+          let
+            res = map_get data name;
+            option_res = if isOk res then Some res._0 else None;
+          in Ok option_res
+        else if builtins.isAttrs data && !(data ? __gleamBuiltIn)
+        then
+          if builtins.isInt name && data ? __gleamTag && data ? "_${string_name}"
+          then Ok (Some data."_${string_name}") # access positional record field
+          else if !(builtins.isString name)
           then Ok None
           else if data ? ${name}
           then Ok (Some data.${name})
-          else if (builtins.isInt originalName || builtins.match "^[[:digit:]]+$" name != null) && data ? "_${name}"
-          then Ok (Some data."_${name}") # heuristic to access positional fields of records
+          else if data ? __gleamTag && data ? "${name}'"
+          then Ok (Some data."${name}'") # escaped field name
           else Ok None
         else not_a_map_error;
 
@@ -391,7 +415,10 @@ let
               inspected_value =
                 let
                   value = data.${a};
-                in if builtins.isAttrs value then "//nix({ ... })" else inspect value;
+                in
+                  if builtins.isAttrs value && !(data ? __gleamTag) && !(data ? __gleamBuiltIn)
+                  then "//nix({ ... })"
+                  else inspect value;
             in " ${escaped_attr_name} = ${inspected_value};";
 
         attr_pairs = builtins.concatStringsSep "" (map attr_mapper (builtins.attrNames data));

@@ -345,6 +345,7 @@ let
       let
         string_name = builtins.toString name;
         not_a_map_error = decoder_error "Dict" data;
+        not_found_attr_result = if data ? __gleamTag then not_a_map_error else Ok None; # for consistency with JS
       in
         if is_dict data
         then
@@ -357,12 +358,12 @@ let
           if builtins.isInt name && data ? __gleamTag && data ? "_${string_name}"
           then Ok (Some data."_${string_name}") # access positional record field
           else if !(builtins.isString name)
-          then Ok None
+          then not_found_attr_result
           else if data ? ${name}
           then Ok (Some data.${name})
           else if data ? __gleamTag && data ? "${name}'"
           then Ok (Some data."${name}'") # escaped field name
-          else Ok None
+          else not_found_attr_result
         else not_a_map_error;
 
   decode_map =

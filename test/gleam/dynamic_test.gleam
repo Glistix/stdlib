@@ -1,5 +1,5 @@
-import gleam/dynamic.{DecodeError}
 import gleam/dict
+import gleam/dynamic.{DecodeError}
 import gleam/option.{None, Some}
 import gleam/result
 import gleam/should

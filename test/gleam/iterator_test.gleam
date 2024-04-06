@@ -1,8 +1,18 @@
+import gleam/dict
+import gleam/int
 import gleam/iterator.{Done, Next}
 import gleam/list
-import gleam/dict
 import gleam/should
-import gleam/int
+
+@target(erlang)
+const tco_test_cycles = 1_000_000
+
+@target(javascript)
+const tco_test_cycles = 1_000_000
+
+// Nix does not have TCO
+@target(nix)
+const tco_test_cycles = 100
 
 // a |> from_list |> to_list == a
 pub fn to_from_list_test() {
@@ -470,7 +480,7 @@ pub fn any_test() {
 
   // TCO test
   iterator.repeat(1)
-  |> iterator.take(1_000_000)
+  |> iterator.take(tco_test_cycles)
   |> iterator.any(satisfying: fn(n) { n % 2 == 0 })
   |> should.be_false
 }
@@ -490,7 +500,7 @@ pub fn all_test() {
 
   // TCO test
   iterator.repeat(0)
-  |> iterator.take(1_000_000)
+  |> iterator.take(tco_test_cycles)
   |> iterator.all(satisfying: fn(n) { n % 2 == 0 })
   |> should.be_true
 }

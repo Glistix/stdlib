@@ -1,8 +1,8 @@
+import gleam/dict
 import gleam/float
-import gleam/pair
 import gleam/int
 import gleam/list
-import gleam/dict
+import gleam/pair
 import gleam/should
 
 @target(erlang)
@@ -15,6 +15,12 @@ const recursion_test_cycles = 1_000_000
 // - Safari 16 crashes around 40_000+.
 @target(javascript)
 const recursion_test_cycles = 40_000
+
+// Nix appears to crash after 35_000-40_000 recursions.
+// We would normally input 40_000 here for the tests, therefore.
+// However, Nix does not have TCO, unfortunately.
+@target(nix)
+const recursion_test_cycles = 1
 
 pub fn length_test() {
   list.length([])

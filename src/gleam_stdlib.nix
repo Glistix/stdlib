@@ -712,7 +712,7 @@ let
   # TODO: Apply regex options
   regex_check = regex: string: builtins.length (builtins.split regex.expr string) > 1;
 
-  regex_split = regex: string: essentials.splitStringWithRegex regex.expr string;
+  regex_split = regex: string: toList (essentials.splitStringWithRegex regex.expr string);
 
   regex_scan =
     regex: string:

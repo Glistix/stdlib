@@ -41,7 +41,7 @@ pub fn append(to first: BitArray, suffix second: BitArray) -> BitArray {
 ///
 @external(erlang, "gleam_stdlib", "bit_array_slice")
 @external(javascript, "../gleam_stdlib.mjs", "bit_array_slice")
-@external(nix, "../gleam_stdlib.nix", "unimplemented3")
+@external(nix, "../gleam_stdlib.nix", "bit_array_slice")
 pub fn slice(
   from string: BitArray,
   at position: Int,

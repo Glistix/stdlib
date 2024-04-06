@@ -810,6 +810,20 @@ let
 
   bit_array_inspect = array: "<<${builtins.concatStringsSep ", " (map builtins.toString array.buffer)}>>";
 
+  bit_array_slice =
+    array: position: length:
+      let
+        posWithLength = position + length;
+        # account for negative lengths
+        start = if posWithLength > position then position else posWithLength;
+        end = if position > posWithLength then position else posWithLength;
+        absLength = if length < 0 then -length else length;
+        slicedBuffer = builtins.genList (i: builtins.elemAt array.buffer (i + start)) absLength;
+      in
+        if start < 0 || end > builtins.length array.buffer
+        then Error Nil
+        else Ok (toBitArray [ slicedBuffer ]);
+
   bit_array_from_string = string: toBitArray [ (stringBits string) ];
 
   bit_array_to_string =
@@ -897,6 +911,7 @@ in
       byte_size
       bit_array_concat
       bit_array_inspect
+      bit_array_slice
       bit_array_from_string
       bit_array_to_string
       new_map

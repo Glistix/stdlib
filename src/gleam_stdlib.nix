@@ -9,7 +9,9 @@ let
       byteSize
       toBitArray
       isOk
-      listIsEmpty;
+      listIsEmpty
+      stringBits
+      byteArrayToUtf8String;
 
   inherit (builtins.import ./gleam/dynamic.nix) DecodeError;
 
@@ -807,6 +809,14 @@ let
   bit_array_concat = arrays: toBitArray (list_to_mapped_nix_list (a: a.buffer) arrays);
 
   bit_array_inspect = array: "<<${builtins.concatStringsSep ", " (map builtins.toString array.buffer)}>>";
+
+  bit_array_from_string = string: toBitArray [ (stringBits string) ];
+
+  bit_array_to_string =
+    array:
+      let
+        result = byteArrayToUtf8String array;
+      in if builtins.isNull result then Error Nil else Ok result;
 in
   {
     inherit
@@ -887,6 +897,8 @@ in
       byte_size
       bit_array_concat
       bit_array_inspect
+      bit_array_from_string
+      bit_array_to_string
       new_map
       map_size
       map_get

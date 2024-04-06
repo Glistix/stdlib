@@ -8,7 +8,7 @@ import gleam/string
 ///
 @external(erlang, "gleam_stdlib", "identity")
 @external(javascript, "../gleam_stdlib.mjs", "bit_array_from_string")
-@external(nix, "../gleam_stdlib.nix", "unimplemented")
+@external(nix, "../gleam_stdlib.nix", "bit_array_from_string")
 pub fn from_string(x: String) -> BitArray
 
 /// Returns an integer which is the number of bytes in the bit array.
@@ -72,8 +72,12 @@ fn do_is_utf8(bits: BitArray) -> Bool {
 }
 
 @target(nix)
-@external(nix, "../gleam_stdlib.nix", "unimplemented")
-fn do_is_utf8(bits: BitArray) -> Bool
+fn do_is_utf8(bits: BitArray) -> Bool {
+  case to_string(bits) {
+    Ok(_) -> True
+    _ -> False
+  }
+}
 
 /// Converts a bit array to a string.
 ///
@@ -100,7 +104,7 @@ fn do_to_string(bits: BitArray) -> Result(String, Nil) {
 fn do_to_string(a: BitArray) -> Result(String, Nil)
 
 @target(nix)
-@external(nix, "../gleam_stdlib.nix", "unimplemented")
+@external(nix, "../gleam_stdlib.nix", "bit_array_to_string")
 fn do_to_string(a: BitArray) -> Result(String, Nil)
 
 /// Creates a new bit array by joining multiple binaries.

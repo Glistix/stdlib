@@ -487,7 +487,7 @@ let
 
   uppercase = essentials.toUpper;
 
-  split = string: pattern: if pattern == "" then string_to_codepoint_strings string else essentials.splitString pattern string;
+  split = string: pattern: if pattern == "" then string_to_codepoint_strings string else toList (essentials.splitString pattern string);
 
   split_once = string: pattern:
     let

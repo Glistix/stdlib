@@ -103,4 +103,10 @@ let
         then map // { _attrs = updatedAttrs; }
         else map // { _list = updatedList; };
 
-in { inherit Dict new_map map_size map_get map_insert map_remove map_to_list; }
+  map_from_attrs =
+    set:
+      let
+        names = builtins.attrNames set;
+      in builtins.foldl' (map: name: map_insert name set.${name} map) (new_map {}) names;
+
+in { inherit Dict new_map map_size map_get map_insert map_remove map_to_list map_from_attrs; }

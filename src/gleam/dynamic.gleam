@@ -1034,7 +1034,7 @@ pub fn dict(
 
 @external(erlang, "gleam_stdlib", "decode_map")
 @external(javascript, "../gleam_stdlib.mjs", "decode_map")
-@external(nix, "../gleam_stdlib.nix", "unimplemented")
+@external(nix, "../gleam_stdlib.nix", "decode_map")
 fn decode_map(a: Dynamic) -> Result(Dict(Dynamic, Dynamic), DecodeErrors)
 
 /// Joins multiple decoders into one. When run they will each be tried in turn

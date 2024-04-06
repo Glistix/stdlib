@@ -23,7 +23,8 @@ let
     map_get
     map_insert
     map_remove
-    map_to_list;
+    map_to_list
+    map_from_attrs;
 
   Nil = null;
 
@@ -363,6 +364,14 @@ let
           then Ok (Some data."${name}'") # escaped field name
           else Ok None
         else not_a_map_error;
+
+  decode_map =
+    data:
+      if is_dict data
+      then Ok data
+      else if builtins.isAttrs data && !(data ? __gleamTag) && !(data ? __gleamBuiltIn) # forbid records, lists, bit arrays
+      then Ok (map_from_attrs data)
+      else decoder_error "Dict" data;
 
   tuple_get =
     data: index:
@@ -793,6 +802,7 @@ in
       decode_list
       decode_option
       decode_field
+      decode_map
       tuple_get
       size_of_tuple
       decode_result

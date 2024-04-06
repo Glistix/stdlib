@@ -120,9 +120,21 @@ let
 
   bitwise_exclusive_or = builtins.bitXor;
 
-  bitwise_shift_left = x: n: if n <= 0 then x else bitwise_shift_left (x * 2) (n - 1);
+  bitwise_shift_left =
+    x: n:
+      if n < 0
+      then bitwise_shift_right x (-n)
+      else if n == 0
+      then x
+      else bitwise_shift_left (x * 2) (n - 1);
 
-  bitwise_shift_right = x: n: if n <= 0 then x else bitwise_shift_right (x / 2) (n - 1);
+  bitwise_shift_right =
+    x: n:
+      if n < 0
+      then bitwise_shift_left x (-n)
+      else if n == 0 || x == (-1) # must keep the sign bit
+      then x
+      else bitwise_shift_right (x / 2) (n - 1);
 
   parse_float =
     let

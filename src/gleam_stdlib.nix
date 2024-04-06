@@ -231,11 +231,37 @@ let
 
   # TODO: Properly accept fractional exponents.
   power = x: n:
-    if builtins.floor n == 0
+    if n == 0.5
+    then square_root x  # heuristic for square_root function
+    else if builtins.floor n == 0
     then 1
     else if n < 0
     then power (1 / x) (-n)
     else x * power x (n - 1);
+
+  # Credit to:
+  # https://github.com/xddxdd/nix-math
+  square_root =
+    let
+      epsilon = power (0.1) 10;
+      fabs =
+        x:
+          if x < 0
+          then 0 - x
+          else x;
+    in
+      x:
+        let
+          helper = tmp: let
+            value = (tmp + 1.0 * x / tmp) / 2;
+          in
+            if (fabs (value - tmp)) < epsilon
+            then value
+            else helper value;
+        in
+          if x < epsilon
+          then 0
+          else helper (1.0 * x);
 
   # No global seed to change, so there isn't much we can do.
   random_uniform = {}: 0.646355926896028;

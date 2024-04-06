@@ -770,7 +770,29 @@ let
           submatches:
             let
               fullMatch = builtins.head submatches;
-              otherMatches = builtins.map (m: if m == null then None else Some m) (builtins.tail submatches);
+              initialOtherMatches = builtins.tail submatches;
+              firstTrailingNull =
+                (builtins.foldl'
+                  ({ currPos, nullPos }: elem:
+                    if elem == null && nullPos == null # first null since the latest non-null
+                    then { currPos = currPos + 1; nullPos = currPos; }
+                    else if elem != null && nullPos != null # first non-null since the latest null
+                    then { currPos = currPos + 1; nullPos = null; }
+                    else { inherit nullPos; currPos = currPos + 1; }
+                  )
+                  { currPos = 0; nullPos = null; }
+                  initialOtherMatches).nullPos;
+              newLength =
+                if builtins.isNull firstTrailingNull
+                then builtins.length initialOtherMatches
+                else firstTrailingNull;
+              # remove trailing null submatches (for consistency with other targets)
+              initialOtherMatchesWithoutTrailingNull =
+                builtins.genList (builtins.elemAt initialOtherMatches) newLength;
+              otherMatches =
+                builtins.map
+                  (m: if builtins.isNull m || m == "" then None else Some m)
+                  initialOtherMatchesWithoutTrailingNull;
             in Match fullMatch (toList otherMatches);
         matches = builtins.map matchListToMatch matchLists;
       in

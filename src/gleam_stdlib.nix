@@ -762,7 +762,32 @@ let
   # TODO: Apply regex options
   regex_check = regex: string: builtins.length (builtins.split regex.expr string) > 1;
 
-  regex_split = regex: string: toList (essentials.splitStringWithRegex regex.expr string);
+  regex_split =
+    regex: string:
+      let
+        # Generally same algorithm as for scan
+        # We need this for consistency with other targets
+        # 1. Nulls become ""
+        # 2. Strings are kept
+        fixMatchList =
+          submatches:
+            let
+              # replace nulls with empty strings (for consistency with other targets)
+              fixedSubmatches =
+                builtins.map
+                  (m: if builtins.isNull m then "" else m)
+                  submatches;
+            in fixedSubmatches;
+
+        mapSplitResult =
+          item:
+            if builtins.isString item
+            then [ item ]
+            else fixMatchList item;
+
+        # Splits and their matches are joined
+        joinedSplits = builtins.concatMap mapSplitResult (builtins.split regex.expr string);
+      in toList (joinedSplits);
 
   regex_scan =
     regex: string:

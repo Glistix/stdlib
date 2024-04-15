@@ -425,12 +425,11 @@ let
 
   inspect =
     data:
-      if builtins.isInt data || builtins.isFloat data
-      then builtins.toString data
+      if builtins.isInt data then builtins.toString data
       else if data == true then "True"
       else if data == false then "False"
       else if builtins.isNull data then "Nil"
-      else if builtins.isString data then builtins.toJSON data
+      else if builtins.isString data || builtins.isFloat data then builtins.toJSON data
       else if builtins.isFunction data then "//fn(...) { ... }"
       else if builtins.isList data then
         let

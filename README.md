@@ -30,7 +30,7 @@ gleam_stdlib = { path = "./external/stdlib" }
 
 4. Done, your code will now compile, and your dependencies will use the ported version of the standard library.
 
-The same procedure is done for any Nix ports you may want to use in your project, e.g. `gleeunit`, `json`, `birl` and so on.
+The same procedure is done for any Nix ports you may want to use in your project, e.g. [`gleeunit`](https://github.com/Glistix/gleeunit/), [`json`](https://github.com/Glistix/json), [`birl`](https://github.com/Glistix/birl) and so on.
 
 It is expected that this procedure will become simpler in the future, once Gleam gets Git dependencies and built-in patching
 of dependencies.
@@ -89,8 +89,8 @@ Supports Erlang, JavaScript and Nix.
 
 ### Compatibility
 
-For Erlang and JavaScript targets, the same disclaimer as the actual
-standard library applies:
+For Erlang and JavaScript targets, the same disclaimer as `gleam_stdlib`
+applies:
 
 "This library is compatible with all versions of Erlang/OTP, NodeJS, and
 major browsers that are currently supported by their maintainers. If you

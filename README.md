@@ -3,7 +3,7 @@
 <a href="https://github.com/Glistix/stdlib/releases"><img src="https://img.shields.io/github/release/Glistix/stdlib" alt="GitHub release"></a>
 ![CI](https://github.com/Glistix/stdlib/workflows/CI/badge.svg?branch=main)
 
-This is a Glistix port of Gleam's standard library (https://github.com/gleam-lang/stdlib). Its documentation is availalbe [HexDocs](https://hexdocs.pm/gleam_stdlib/).
+This is a Glistix port of Gleam's standard library (https://github.com/gleam-lang/stdlib). Its original documentation is available on [HexDocs](https://hexdocs.pm/gleam_stdlib/).
 
 ## Installation
 

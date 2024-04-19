@@ -10,20 +10,20 @@
 import gleam/int
 import gleam/list
 import gleam/option.{type Option, None, Some}
+@target(javascript)
+import gleam/pair
+@target(nix)
+import gleam/pair
+@target(javascript)
+import gleam/regex
+@target(nix)
+import gleam/regex
+@target(javascript)
+import gleam/result
+@target(nix)
+import gleam/result
 import gleam/string
 import gleam/string_builder.{type StringBuilder}
-@target(javascript)
-import gleam/pair
-@target(nix)
-import gleam/pair
-@target(javascript)
-import gleam/regex
-@target(nix)
-import gleam/regex
-@target(javascript)
-import gleam/result
-@target(nix)
-import gleam/result
 
 /// Type representing holding the parsed components of an URI.
 /// All components of a URI are optional, except the path.

@@ -69,6 +69,7 @@ pub fn dynamic(value: Dynamic) -> Result(Dynamic, List(DecodeError)) {
 ///
 /// ```gleam
 /// import gleam/bit_array
+///
 /// bit_array(from("Hello")) == bit_array.from_string("Hello")
 /// // -> True
 /// ```
@@ -362,19 +363,25 @@ pub fn list(
 /// ```
 ///
 /// ```gleam
+/// // `gleam/erlang/*` is available via the `gleam_erlang` package
 /// import gleam/erlang/atom
+///
 /// from(atom.from_string("null")) |> optional(string)
 /// // -> Ok(None)
 /// ```
 ///
 /// ```gleam
+/// // `gleam/erlang/*` is available via the `gleam_erlang` package
 /// import gleam/erlang/atom
+///
 /// from(atom.from_string("nil")) |> optional(string)
 /// // -> Ok(None)
 /// ```
 ///
 /// ```gleam
+/// // `gleam/erlang/*` is available via the `gleam_erlang` package
 /// import gleam/erlang/atom
+///
 /// from(atom.from_string("undefined")) |> optional(string)
 /// // -> Ok(None)
 /// ```

@@ -116,13 +116,13 @@ pub fn split_test() {
   |> should.equal(["foo", "32", "4", "9", "0"])
 }
 
-// our test
-// splits also include matches
 pub fn matching_split_test() {
   let assert Ok(re) = regex.from_string("([+-])( *)(d)*")
 
   regex.split(re, "abc+ def+ghi+  abc")
-  |> should.equal(["abc", "+", " ", "d", "ef", "+", "", "", "ghi", "+", "  ", "", "abc"])
+  |> should.equal([
+    "abc", "+", " ", "d", "ef", "+", "", "", "ghi", "+", "  ", "", "abc",
+  ])
 }
 
 pub fn scan_test() {

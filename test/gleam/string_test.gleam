@@ -928,31 +928,16 @@ pub fn function_inspect_test() {
   string.inspect(fn() { Nil })
   |> should.equal("//fn() { ... }")
 
-  string.inspect(fn(a) {
-    a
-    Nil
-  })
+  string.inspect(fn(_) { Nil })
   |> should.equal("//fn(a) { ... }")
 
-  string.inspect(fn(a, b) {
-    a
-    b
-    Nil
-  })
+  string.inspect(fn(_, _) { Nil })
   |> should.equal("//fn(a, b) { ... }")
 
-  string.inspect(fn(x, y) {
-    x
-    y
-    Nil
-  })
+  string.inspect(fn(_, _) { Nil })
   |> should.equal("//fn(a, b) { ... }")
 
-  string.inspect(fn(foo: Int, bar: String) -> Bool {
-    foo
-    bar
-    False
-  })
+  string.inspect(fn(_: Int, _: String) -> Bool { False })
   |> should.equal("//fn(a, b) { ... }")
 
   string.inspect(#(InspectTypeOne, InspectTypeTwo))

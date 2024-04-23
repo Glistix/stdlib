@@ -3,6 +3,8 @@
 <a href="https://github.com/Glistix/stdlib/releases"><img src="https://img.shields.io/github/release/Glistix/stdlib" alt="GitHub release"></a>
 ![CI](https://github.com/Glistix/stdlib/workflows/CI/badge.svg?branch=main)
 
+**Mirrors:** [**GitHub**](https://github.com/Glistix/stdlib) | [**Codeberg**](https://codeberg.org/Glistix/stdlib)
+
 This is a port of Gleam's standard library (https://github.com/gleam-lang/stdlib) to Glistix's Nix target. Its original documentation is available on [HexDocs](https://hexdocs.pm/gleam_stdlib/).
 
 **Note:** This is a Glistix project, and as such may require the

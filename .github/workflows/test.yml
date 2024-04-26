@@ -1,0 +1,28 @@
+name: test
+
+on:
+  push:
+    branches:
+      - master
+      - main
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: 'recursive'
+      - uses: cachix/install-nix-action@v26
+      - uses: DeterminateSystems/magic-nix-cache-action@v4
+      - name: Ensure flake.lock was committed
+        run: ls flake.lock
+      - run: nix flake check -L
+      - run: nix build -L
+      - run: glistix deps download
+        shell: nix develop --command bash -e {0}
+      - run: glistix test
+        shell: nix develop --command bash -e {0}
+      - run: glistix format --check src test
+        shell: nix develop --command bash -e {0}

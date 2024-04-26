@@ -1,7 +1,7 @@
 # stdlib
 
 <a href="https://github.com/Glistix/stdlib/releases"><img src="https://img.shields.io/github/release/Glistix/stdlib" alt="GitHub release"></a>
-![CI](https://github.com/Glistix/stdlib/workflows/CI/badge.svg?branch=main)
+[![test](https://github.com/Glistix/stdlib/actions/workflows/test.yml/badge.svg)](https://github.com/Glistix/stdlib/actions/workflows/test.yml)
 
 **Mirrors:** [**GitHub**](https://github.com/Glistix/stdlib) | [**Codeberg**](https://codeberg.org/Glistix/stdlib)
 

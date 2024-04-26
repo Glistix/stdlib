@@ -20,7 +20,7 @@ const recursion_test_cycles = 40_000
 // We would normally input 40_000 here for the tests, therefore.
 // However, Nix does not have TCO, unfortunately.
 @target(nix)
-const recursion_test_cycles = 1
+const recursion_test_cycles = 10
 
 pub fn length_test() {
   list.length([])

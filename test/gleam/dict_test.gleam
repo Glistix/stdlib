@@ -249,8 +249,9 @@ pub fn insert_order_equality_test() {
   |> should.equal(grow_and_shrink_map(4, 2))
   grow_and_shrink_map(17, 10)
   |> should.equal(grow_and_shrink_map(12, 10))
-  grow_and_shrink_map(2000, 1000)
-  |> should.equal(grow_and_shrink_map(1000, 1000))
+  // Nix doesn't have TCO
+  grow_and_shrink_map(200, 100)
+  |> should.equal(grow_and_shrink_map(100, 100))
 }
 
 // ensure operations on a map don't mutate it
@@ -265,10 +266,11 @@ pub fn persistence_test() {
 
 // using maps as keys should work (tests hash function)
 pub fn map_as_key_test() {
-  let l = range(0, 1000, [])
+  // Nix doesn't have TCO
+  let l = range(0, 100, [])
   let a = list_to_map(l)
   let a2 = list_to_map(list.reverse(l))
-  let a3 = grow_and_shrink_map(2000, 1000)
+  let a3 = grow_and_shrink_map(200, 100)
   let b = grow_and_shrink_map(60, 50)
   let c = grow_and_shrink_map(50, 20)
   let d = grow_and_shrink_map(2, 2)
@@ -301,7 +303,8 @@ pub fn map_as_key_test() {
 }
 
 pub fn large_n_test() {
-  let n = 10_000
+  // Nix doesn't have TCO
+  let n = 100
   let l = range(0, n, [])
 
   let m = list_to_map(l)
@@ -312,7 +315,7 @@ pub fn large_n_test() {
 }
 
 pub fn size_test() {
-  let n = 1000
+  let n = 100
   let m = list_to_map(range(0, n, []))
   dict.size(m)
   |> should.equal(n)

@@ -1,26 +1,33 @@
 import gleam/option.{None, Some}
+
 // import gleam/regex.{Match, Options}
 import gleam/regex.{Match}
 import gleam/should
 
 @target(erlang)
 const word = "\\w"
+
 @target(erlang)
 const space = "\\s"
+
 @target(erlang)
 const digit = "\\d"
 
 @target(javascript)
 const word = "\\w"
+
 @target(javascript)
 const space = "\\s"
+
 @target(javascript)
 const digit = "\\d"
 
 @target(nix)
 const word = "[[:alnum:]_]"
+
 @target(nix)
 const space = "[[:space:]]"
+
 @target(nix)
 const digit = "[0-9]"
 
@@ -159,7 +166,8 @@ pub fn scan_test() {
   regex.scan(re, "你好 42 世界")
   |> should.equal([Match(content: "42", submatches: [Some("42")])])
 
-  let assert Ok(re) = regex.from_string("([+|\\-])?(" <> digit <> "+)(" <> word <> "+)?")
+  let assert Ok(re) =
+    regex.from_string("([+|\\-])?(" <> digit <> "+)(" <> word <> "+)?")
   regex.scan(re, "+36kg")
   |> should.equal([
     Match(content: "+36kg", submatches: [Some("+"), Some("36"), Some("kg")]),
@@ -180,7 +188,19 @@ pub fn scan_test() {
   |> should.equal([])
 
   let assert Ok(re) =
-    regex.from_string("var" <> space <> "*(" <> word <> "+)" <> space <> "*(int|string)?" <> space <> "*=" <> space <> "*(.*)")
+    regex.from_string(
+      "var"
+      <> space
+      <> "*("
+      <> word
+      <> "+)"
+      <> space
+      <> "*(int|string)?"
+      <> space
+      <> "*="
+      <> space
+      <> "*(.*)",
+    )
   regex.scan(re, "var age int = 32")
   |> should.equal([
     Match(content: "var age int = 32", submatches: [
@@ -195,7 +215,8 @@ pub fn scan_test() {
     Match(content: "var age = 32", submatches: [Some("age"), None, Some("32")]),
   ])
 
-  let assert Ok(re) = regex.from_string("let (" <> word <> "+) = (" <> word <> "+)")
+  let assert Ok(re) =
+    regex.from_string("let (" <> word <> "+) = (" <> word <> "+)")
   regex.scan(re, "let age = 32")
   |> should.equal([
     Match(content: "let age = 32", submatches: [Some("age"), Some("32")]),

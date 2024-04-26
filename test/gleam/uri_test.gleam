@@ -4,6 +4,7 @@
 
 import gleam/option.{None, Some}
 import gleam/should
+
 // import gleam/string
 import gleam/uri
 

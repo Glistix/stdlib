@@ -58,7 +58,6 @@ pub fn reverse_test() {
   |> string_builder.reverse
   |> string_builder.to_string
   |> should.equal("👶🏿")
-
   // "👶🏿"
   // |> string_builder.from_string
   // |> string_builder.reverse

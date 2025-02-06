@@ -20,4 +20,4 @@ rebar3.crashdump
 doc
 .tool-versions
 build
-manifest.toml
+# manifest.toml

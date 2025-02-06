@@ -2,6 +2,16 @@ import gleam/list
 import gleam/result
 import gleam/should
 
+@target(erlang)
+const tco_test_cycles = 1_000_000
+
+@target(javascript)
+const tco_test_cycles = 1_000_000
+
+// Nix does not have TCO
+@target(nix)
+const tco_test_cycles = 100
+
 pub fn is_ok_test() {
   result.is_ok(Ok(1))
   |> should.be_true
@@ -214,10 +224,10 @@ pub fn partition_test() {
   |> should.equal(#([2, 1], ["c", "b", "a"]))
 
   // TCO test
-  list.repeat(Ok(1), 1_000_000)
+  list.repeat(Ok(1), tco_test_cycles)
   |> result.partition
 
-  list.repeat(Error("a"), 1_000_000)
+  list.repeat(Error("a"), tco_test_cycles)
   |> result.partition
 }
 

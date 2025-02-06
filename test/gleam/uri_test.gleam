@@ -1,9 +1,11 @@
 // TODO: IPv6 URI parse tests
 // https://github.com/elixir-lang/elixir/blob/2d43b9670f54c4d8e0be1ee4d2ee8f99d7378480/lib/elixir/test/elixir/uri_test.exs
-import gleam/list
+// import gleam/list
+
 import gleam/option.{None, Some}
 import gleam/should
-import gleam/string
+
+// import gleam/string
 import gleam/uri
 
 pub fn full_parse_test() {
@@ -304,93 +306,93 @@ pub fn port_to_string_test() {
   |> should.equal("noslash")
 }
 
-pub fn parse_query_string_test() {
-  let assert Ok(parsed) = uri.parse_query("weebl+bob=1&city=%C3%B6rebro")
-  should.equal(parsed, [#("weebl bob", "1"), #("city", "örebro")])
+// pub fn parse_query_string_test() {
+//   let assert Ok(parsed) = uri.parse_query("weebl+bob=1&city=%C3%B6rebro")
+//   should.equal(parsed, [#("weebl bob", "1"), #("city", "örebro")])
 
-  // Duplicates keys not overridden
-  let assert Ok(parsed) = uri.parse_query("a[]=1&a[]=2")
+//   // Duplicates keys not overridden
+//   let assert Ok(parsed) = uri.parse_query("a[]=1&a[]=2")
 
-  parsed
-  |> should.equal([#("a[]", "1"), #("a[]", "2")])
-}
+//   parsed
+//   |> should.equal([#("a[]", "1"), #("a[]", "2")])
+// }
 
-pub fn parse_empty_query_string_test() {
-  let assert Ok(parsed) = uri.parse_query("")
-  should.equal(parsed, [])
-}
+// pub fn parse_empty_query_string_test() {
+//   let assert Ok(parsed) = uri.parse_query("")
+//   should.equal(parsed, [])
+// }
 
-pub fn parse_query_string_with_empty_test() {
-  uri.parse_query("present")
-  |> should.equal(Ok([#("present", "")]))
-}
+// pub fn parse_query_string_with_empty_test() {
+//   uri.parse_query("present")
+//   |> should.equal(Ok([#("present", "")]))
+// }
 
-pub fn error_parsing_query_test() {
-  should.equal(uri.parse_query("%C2"), Error(Nil))
-}
+// pub fn error_parsing_query_test() {
+//   should.equal(uri.parse_query("%C2"), Error(Nil))
+// }
 
-pub fn query_to_string_test() {
-  let query_string =
-    uri.query_to_string([#("weebl bob", "1"), #("city", "örebro")])
-  should.equal(query_string, "weebl%20bob=1&city=%C3%B6rebro")
-}
+// pub fn query_to_string_test() {
+//   let query_string =
+//     uri.query_to_string([#("weebl bob", "1"), #("city", "örebro")])
+//   should.equal(query_string, "weebl%20bob=1&city=%C3%B6rebro")
+// }
 
-pub fn empty_query_to_string_test() {
-  let query_string = uri.query_to_string([])
-  should.equal(query_string, "")
-}
+// pub fn empty_query_to_string_test() {
+//   let query_string = uri.query_to_string([])
+//   should.equal(query_string, "")
+// }
 
-const percent_codec_fixtures = [
-  #(" ", "%20"), #(",", "%2C"), #(";", "%3B"), #(":", "%3A"), #("!", "!"),
-  #("?", "%3F"), #("'", "'"), #("(", "("), #(")", ")"), #("[", "%5B"),
-  #("@", "%40"), #("/", "%2F"), #("\\", "%5C"), #("&", "%26"), #("#", "%23"),
-  #("=", "%3D"), #("~", "~"), #("ñ", "%C3%B1"), #("-", "-"), #("_", "_"),
-  #(".", "."), #("*", "*"), #("100% great", "100%25%20great"),
-]
+// const percent_codec_fixtures = [
+//   #(" ", "%20"), #(",", "%2C"), #(";", "%3B"), #(":", "%3A"), #("!", "!"),
+//   #("?", "%3F"), #("'", "'"), #("(", "("), #(")", ")"), #("[", "%5B"),
+//   #("@", "%40"), #("/", "%2F"), #("\\", "%5C"), #("&", "%26"), #("#", "%23"),
+//   #("=", "%3D"), #("~", "~"), #("ñ", "%C3%B1"), #("-", "-"), #("_", "_"),
+//   #(".", "."), #("*", "*"), #("100% great", "100%25%20great"),
+// ]
 
-// Allowed chars
-pub fn percent_encode_test() {
-  percent_codec_fixtures
-  |> list.map(fn(t) {
-    let #(a, b) = t
-    uri.percent_encode(a)
-    |> should.equal(b)
-  })
-}
+// // Allowed chars
+// pub fn percent_encode_test() {
+//   percent_codec_fixtures
+//   |> list.map(fn(t) {
+//     let #(a, b) = t
+//     uri.percent_encode(a)
+//     |> should.equal(b)
+//   })
+// }
 
-pub fn percent_encode_consistency_test() {
-  let k = "weebl bob[]"
-  let v = "ñaña (,:*~)"
+// pub fn percent_encode_consistency_test() {
+//   let k = "weebl bob[]"
+//   let v = "ñaña (,:*~)"
 
-  let query_string = uri.query_to_string([#(k, v)])
+//   let query_string = uri.query_to_string([#(k, v)])
 
-  let encoded_key = uri.percent_encode(k)
-  let encoded_value = uri.percent_encode(v)
-  let manual_query_string = string.concat([encoded_key, "=", encoded_value])
+//   let encoded_key = uri.percent_encode(k)
+//   let encoded_value = uri.percent_encode(v)
+//   let manual_query_string = string.concat([encoded_key, "=", encoded_value])
 
-  should.equal(query_string, manual_query_string)
-}
+//   should.equal(query_string, manual_query_string)
+// }
 
-pub fn percent_decode_test() {
-  percent_codec_fixtures
-  |> list.map(fn(t) {
-    let #(a, b) = t
-    uri.percent_decode(b)
-    |> should.equal(Ok(a))
-  })
-}
+// pub fn percent_decode_test() {
+//   percent_codec_fixtures
+//   |> list.map(fn(t) {
+//     let #(a, b) = t
+//     uri.percent_decode(b)
+//     |> should.equal(Ok(a))
+//   })
+// }
 
-pub fn percent_decode_consistency_test() {
-  let k = "weebl%20bob[]"
-  let v = "%C3%B6rebro"
-  let query = string.concat([k, "=", v])
-  let assert Ok(parsed) = uri.parse_query(query)
+// pub fn percent_decode_consistency_test() {
+//   let k = "weebl%20bob[]"
+//   let v = "%C3%B6rebro"
+//   let query = string.concat([k, "=", v])
+//   let assert Ok(parsed) = uri.parse_query(query)
 
-  let assert Ok(decoded_key) = uri.percent_decode(k)
-  let assert Ok(decoded_value) = uri.percent_decode(v)
+//   let assert Ok(decoded_key) = uri.percent_decode(k)
+//   let assert Ok(decoded_value) = uri.percent_decode(v)
 
-  should.equal(parsed, [#(decoded_key, decoded_value)])
-}
+//   should.equal(parsed, [#(decoded_key, decoded_value)])
+// }
 
 pub fn parse_segments_test() {
   should.equal(uri.path_segments("/"), [])

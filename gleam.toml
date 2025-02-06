@@ -1,13 +1,14 @@
-name = "gleam_stdlib"
+name = "glistix_stdlib"
 version = "0.38.0"
 gleam = ">= 0.32.0"
 licences = ["Apache-2.0"]
-description = "A standard library for the Gleam programming language"
+description = "A fork of the Gleam standard library for Glistix's Nix target"
 
-repository = { type = "github", user = "gleam-lang", repo = "stdlib" }
+repository = { type = "github", user = "glistix", repo = "stdlib" }
 links = [
-  { title = "Website", href = "https://gleam.run" },
-  { title = "Sponsor", href = "https://github.com/sponsors/lpil" },
+  { title = "Website", href = "https://glistix.github.io/book" },
+  { title = "Compiler", href = "https://github.com/glistix/glistix" },
+  { title = "Sponsor", href = "https://github.com/sponsors/PgBiel" },
 ]
 
 [javascript.deno]

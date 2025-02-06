@@ -18,6 +18,7 @@ pub fn print(string: String) -> Nil {
 
 @external(erlang, "gleam_stdlib", "print")
 @external(javascript, "../gleam_stdlib.mjs", "print")
+@external(nix, "../gleam_stdlib.nix", "print")
 fn do_print(string string: String) -> Nil
 
 /// Writes a string to standard error.
@@ -38,6 +39,7 @@ pub fn print_error(string: String) -> Nil {
 
 @external(erlang, "gleam_stdlib", "print_error")
 @external(javascript, "../gleam_stdlib.mjs", "print_error")
+@external(nix, "../gleam_stdlib.nix", "print")
 fn do_print_error(string string: String) -> Nil
 
 /// Writes a string to standard output, appending a newline to the end.
@@ -56,6 +58,7 @@ pub fn println(string: String) -> Nil {
 
 @external(erlang, "gleam_stdlib", "println")
 @external(javascript, "../gleam_stdlib.mjs", "console_log")
+@external(nix, "../gleam_stdlib.nix", "print")
 fn do_println(string string: String) -> Nil
 
 /// Writes a string to standard error, appending a newline to the end.
@@ -74,6 +77,7 @@ pub fn println_error(string: String) -> Nil {
 
 @external(erlang, "gleam_stdlib", "println_error")
 @external(javascript, "../gleam_stdlib.mjs", "console_error")
+@external(nix, "../gleam_stdlib.nix", "print")
 fn do_println_error(string string: String) -> Nil
 
 /// Prints a value to standard error (stderr) yielding Gleam syntax.
@@ -115,4 +119,5 @@ pub fn debug(term: anything) -> anything {
 
 @external(erlang, "gleam_stdlib", "println_error")
 @external(javascript, "../gleam_stdlib.mjs", "print_debug")
+@external(nix, "../gleam_stdlib.nix", "print")
 fn do_debug_println(string string: String) -> Nil

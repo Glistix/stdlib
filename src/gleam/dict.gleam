@@ -33,6 +33,7 @@ pub type Dict(key, value)
 ///
 @external(erlang, "maps", "size")
 @external(javascript, "../gleam_stdlib.mjs", "map_size")
+@external(nix, "../gleam_stdlib.nix", "map_size")
 pub fn size(dict: Dict(k, v)) -> Int
 
 /// Converts the dict to a list of 2-element tuples `#(key, value)`, one for
@@ -59,6 +60,7 @@ pub fn size(dict: Dict(k, v)) -> Int
 ///
 @external(erlang, "maps", "to_list")
 @external(javascript, "../gleam_stdlib.mjs", "map_to_list")
+@external(nix, "../gleam_stdlib.nix", "map_to_list")
 pub fn to_list(dict: Dict(key, value)) -> List(#(key, value))
 
 /// Converts a list of 2-element tuples `#(key, value)` to a dict.
@@ -82,6 +84,12 @@ fn fold_list_of_pair(
 }
 
 /// Determines whether or not a value present in the dict for a given key.
+///
+/// ## Warning
+///
+/// In the Nix target, this is O(n) instead of O(log n) for keys that are floats
+/// or complex types, such as records with fields, tuples and lists. This is a
+/// temporary problem with the current implementation.
 ///
 /// ## Examples
 ///
@@ -112,12 +120,19 @@ pub fn new() -> Dict(key, value) {
 
 @external(erlang, "maps", "new")
 @external(javascript, "../gleam_stdlib.mjs", "new_map")
+@external(nix, "../gleam_stdlib.nix", "new_map")
 fn do_new() -> Dict(key, value)
 
 /// Fetches a value from a dict for a given key.
 ///
 /// The dict may not have a value for the key, so the value is wrapped in a
 /// `Result`.
+///
+/// ## Warning
+///
+/// In the Nix target, this is O(n) instead of O(log n) for keys that are floats
+/// or complex types, such as records with fields, tuples and lists. This is a
+/// temporary problem with the current implementation.
 ///
 /// ## Examples
 ///
@@ -137,6 +152,7 @@ pub fn get(from: Dict(key, value), get: key) -> Result(value, Nil) {
 
 @external(erlang, "gleam_stdlib", "map_get")
 @external(javascript, "../gleam_stdlib.mjs", "map_get")
+@external(nix, "../gleam_stdlib.nix", "map_get")
 fn do_get(a: Dict(key, value), b: key) -> Result(value, Nil)
 
 /// Inserts a value into the dict with the given key.
@@ -162,6 +178,7 @@ pub fn insert(into dict: Dict(k, v), for key: k, insert value: v) -> Dict(k, v) 
 
 @external(erlang, "maps", "put")
 @external(javascript, "../gleam_stdlib.mjs", "map_insert")
+@external(nix, "../gleam_stdlib.nix", "map_insert")
 fn do_insert(a: key, b: value, c: Dict(key, value)) -> Dict(key, value)
 
 /// Updates all values in a given dict by calling a given function on each key
@@ -374,6 +391,12 @@ fn fold_inserts(new_entries: List(#(k, v)), dict: Dict(k, v)) -> Dict(k, v) {
 /// Creates a new dict from a given dict with all the same entries except for the
 /// one with a given key, if it exists.
 ///
+/// ## Warning
+///
+/// In the Nix target, this is O(n) instead of O(log n) for keys that are floats
+/// or complex types, such as records with fields, tuples and lists. This is a
+/// temporary problem with the current implementation.
+///
 /// ## Examples
 ///
 /// ```gleam
@@ -392,6 +415,7 @@ pub fn delete(from dict: Dict(k, v), delete key: k) -> Dict(k, v) {
 
 @external(erlang, "maps", "remove")
 @external(javascript, "../gleam_stdlib.mjs", "map_remove")
+@external(nix, "../gleam_stdlib.nix", "map_remove")
 fn do_delete(a: k, b: Dict(k, v)) -> Dict(k, v)
 
 /// Creates a new dict from a given dict with all the same entries except any with

@@ -68,6 +68,7 @@ pub fn append_builder(
 
 @external(erlang, "gleam_stdlib", "iodata_append")
 @external(javascript, "../gleam_stdlib.mjs", "add")
+@external(nix, "../gleam_stdlib.nix", "add")
 fn do_append(a: StringBuilder, b: StringBuilder) -> StringBuilder
 
 /// Converts a list of strings into a builder.
@@ -80,6 +81,7 @@ pub fn from_strings(strings: List(String)) -> StringBuilder {
 
 @external(erlang, "gleam_stdlib", "identity")
 @external(javascript, "../gleam_stdlib.mjs", "concat")
+@external(nix, "../gleam_stdlib.nix", "concat")
 fn do_from_strings(a: List(String)) -> StringBuilder
 
 /// Joins a list of builders into a single builder.
@@ -92,6 +94,7 @@ pub fn concat(builders: List(StringBuilder)) -> StringBuilder {
 
 @external(erlang, "gleam_stdlib", "identity")
 @external(javascript, "../gleam_stdlib.mjs", "concat")
+@external(nix, "../gleam_stdlib.nix", "concat")
 fn do_concat(a: List(StringBuilder)) -> StringBuilder
 
 /// Converts a string into a builder.
@@ -104,6 +107,7 @@ pub fn from_string(string: String) -> StringBuilder {
 
 @external(erlang, "gleam_stdlib", "identity")
 @external(javascript, "../gleam_stdlib.mjs", "identity")
+@external(nix, "../gleam_stdlib.nix", "identity")
 fn do_from_string(a: String) -> StringBuilder
 
 /// Turns an `StringBuilder` into a `String`
@@ -117,6 +121,7 @@ pub fn to_string(builder: StringBuilder) -> String {
 
 @external(erlang, "unicode", "characters_to_binary")
 @external(javascript, "../gleam_stdlib.mjs", "identity")
+@external(nix, "../gleam_stdlib.nix", "identity")
 fn do_to_string(a: StringBuilder) -> String
 
 /// Returns the size of the `StringBuilder` in bytes.
@@ -127,6 +132,7 @@ pub fn byte_size(builder: StringBuilder) -> Int {
 
 @external(erlang, "erlang", "iolist_size")
 @external(javascript, "../gleam_stdlib.mjs", "length")
+@external(nix, "../gleam_stdlib.nix", "length")
 fn do_byte_size(a: StringBuilder) -> Int
 
 /// Joins the given builders into a new builder separated with the given string
@@ -146,6 +152,7 @@ pub fn lowercase(builder: StringBuilder) -> StringBuilder {
 
 @external(erlang, "string", "lowercase")
 @external(javascript, "../gleam_stdlib.mjs", "lowercase")
+@external(nix, "../gleam_stdlib.nix", "lowercase")
 fn do_lowercase(a: StringBuilder) -> StringBuilder
 
 /// Converts a builder to a new builder where the contents have been
@@ -157,6 +164,7 @@ pub fn uppercase(builder: StringBuilder) -> StringBuilder {
 
 @external(erlang, "string", "uppercase")
 @external(javascript, "../gleam_stdlib.mjs", "uppercase")
+@external(nix, "../gleam_stdlib.nix", "uppercase")
 fn do_uppercase(a: StringBuilder) -> StringBuilder
 
 /// Converts a builder to a new builder with the contents reversed.
@@ -178,8 +186,21 @@ fn do_reverse(builder: StringBuilder) -> StringBuilder {
   |> from_strings
 }
 
+@target(nix)
+fn do_reverse(builder: StringBuilder) -> StringBuilder {
+  builder
+  |> to_string
+  |> do_to_graphemes
+  |> list.reverse
+  |> from_strings
+}
+
 @target(javascript)
 @external(javascript, "../gleam_stdlib.mjs", "graphemes")
+fn do_to_graphemes(string string: String) -> List(String)
+
+@target(nix)
+@external(nix, "../gleam_stdlib.nix", "string_to_codepoint_strings")
 fn do_to_graphemes(string string: String) -> List(String)
 
 /// Splits a builder on a given pattern into a list of builders.
@@ -209,10 +230,18 @@ fn do_split(
   pattern pattern: String,
 ) -> List(StringBuilder)
 
+@target(nix)
+@external(nix, "../gleam_stdlib.nix", "split")
+fn do_split(
+  builder builder: StringBuilder,
+  pattern pattern: String,
+) -> List(StringBuilder)
+
 /// Replaces all instances of a pattern with a given string substitute.
 ///
 @external(erlang, "gleam_stdlib", "string_replace")
 @external(javascript, "../gleam_stdlib.mjs", "string_replace")
+@external(nix, "../gleam_stdlib.nix", "string_replace")
 pub fn replace(
   in builder: StringBuilder,
   each pattern: String,

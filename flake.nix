@@ -21,7 +21,7 @@
     };
 
     # Pick your Glistix version here.
-    glistix.url = "github:glistix/glistix/v0.3.0";
+    glistix.url = "github:glistix/glistix/v0.6.0";
   };
 
   outputs =

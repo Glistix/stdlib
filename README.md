@@ -2,6 +2,7 @@
 
 <a href="https://github.com/Glistix/stdlib/releases"><img src="https://img.shields.io/github/release/Glistix/stdlib" alt="GitHub release"></a>
 [![test](https://github.com/Glistix/stdlib/actions/workflows/test.yml/badge.svg)](https://github.com/Glistix/stdlib/actions/workflows/test.yml)
+[![Nix-compatible](https://img.shields.io/badge/target-nix-5277C3)](https://github.com/glistix/glistix)
 
 **Mirrors:** [**GitHub**](https://github.com/Glistix/stdlib) | [**Codeberg**](https://codeberg.org/Glistix/stdlib)
 
@@ -11,6 +12,8 @@ This is a port of Gleam's standard library (https://github.com/gleam-lang/stdlib
 [Glistix compiler](https://github.com/glistix/glistix) to be used.
 
 ## Installation
+
+_(NOTE: These instructions will change in a future Glistix version, please check out the [Glistix book](https://glistix.github.io/book) for updated instructions.)_
 
 **It is recommended to use this repository as a Git dependency** for now, in order to override the `gleam_stdlib` dependency of transitive dependencies as well.
 

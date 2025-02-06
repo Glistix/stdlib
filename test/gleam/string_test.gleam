@@ -791,9 +791,7 @@ pub fn inspect_test() {
   |> should.equal("[#(1, 2, 3), #(1, 2, 3)]")
 
   string.inspect(#([1, 2, 3], "🌈", "🏳️‍🌈", #(1, "1", True)))
-  |> should.equal(
-    "#([1, 2, 3], \"🌈\", \"🏳️‍🌈\", #(1, \"1\", True))",
-  )
+  |> should.equal("#([1, 2, 3], \"🌈\", \"🏳️‍🌈\", #(1, \"1\", True))")
 
   string.inspect(Nil)
   |> should.equal("Nil")

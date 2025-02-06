@@ -18,6 +18,13 @@ type Token =
 @target(javascript)
 const token = Nil
 
+@target(nix)
+type Token =
+  Nil
+
+@target(nix)
+const token = Nil
+
 /// A set is a collection of unique members of the same type.
 ///
 /// It is implemented using the `gleam/dict` module, so inserts and lookups have

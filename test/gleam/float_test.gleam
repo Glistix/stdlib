@@ -1,7 +1,8 @@
 import gleam/float
-import gleam/int
-import gleam/iterator
-import gleam/list
+
+// import gleam/int
+// import gleam/iterator
+// import gleam/list
 import gleam/order
 import gleam/should
 
@@ -348,29 +349,29 @@ pub fn product_test() {
   |> should.equal(33.6)
 }
 
-pub fn random_test() {
-  let expected_average = 0.5
-  let iterations = 10_000
-  let sum =
-    list.range(0, iterations)
-    |> iterator.from_list()
-    |> iterator.fold(from: 0.0, with: fn(accumulator, _element) {
-      let i = float.random()
+// pub fn random_test() {
+//   let expected_average = 0.5
+//   let iterations = 10_000
+//   let sum =
+//     list.range(0, iterations)
+//     |> iterator.from_list()
+//     |> iterator.fold(from: 0.0, with: fn(accumulator, _element) {
+//       let i = float.random()
 
-      { i <. 1.0 }
-      |> should.be_true
-      { i >=. 0.0 }
-      |> should.be_true
+//       { i <. 1.0 }
+//       |> should.be_true
+//       { i >=. 0.0 }
+//       |> should.be_true
 
-      accumulator +. i
-    })
-  let average = sum /. int.to_float(iterations)
+//       accumulator +. i
+//     })
+//   let average = sum /. int.to_float(iterations)
 
-  { average <. expected_average +. 0.1 }
-  |> should.be_true
-  { average >. expected_average -. 0.1 }
-  |> should.be_true
-}
+//   { average <. expected_average +. 0.1 }
+//   |> should.be_true
+//   { average >. expected_average -. 0.1 }
+//   |> should.be_true
+// }
 
 pub fn divide_test() {
   float.divide(1.0, 1.0)

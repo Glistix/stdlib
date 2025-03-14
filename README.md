@@ -2,66 +2,35 @@
 
 <a href="https://github.com/Glistix/stdlib/releases"><img src="https://img.shields.io/github/release/Glistix/stdlib" alt="GitHub release"></a>
 [![test](https://github.com/Glistix/stdlib/actions/workflows/test.yml/badge.svg)](https://github.com/Glistix/stdlib/actions/workflows/test.yml)
+[![Nix-compatible](https://img.shields.io/badge/target-nix-5277C3)](https://github.com/glistix/glistix)
 
 **Mirrors:** [**GitHub**](https://github.com/Glistix/stdlib) | [**Codeberg**](https://codeberg.org/Glistix/stdlib)
 
-This is a port of Gleam's standard library (https://github.com/gleam-lang/stdlib) to Glistix's Nix target. Its original documentation is available on [HexDocs](https://hexdocs.pm/gleam_stdlib/).
+This is a port of Gleam's standard library (https://github.com/gleam-lang/stdlib) to Glistix's Nix target. Documentation is available on [HexDocs](https://hexdocs.pm/glistix_stdlib/).
 
 **Note:** This is a Glistix project, and as such may require the
 [Glistix compiler](https://github.com/glistix/glistix) to be used.
 
 ## Installation
 
-**It is recommended to use this repository as a Git dependency** for now, in order to override the `gleam_stdlib` dependency of transitive dependencies as well.
+_For the most recent instructions, please see [the Glistix handbook](https://glistix.github.io/book/recipes/overriding-packages.html)._
 
-However, since Gleam (and thus Glistix) doesn't support Git dependencies, **you will have to add this repository as a local dependency to a Git submodule**
-(at least for now).
+This fork is available on Hex and already installed by default on any new Glistix projects using `glistix new`.
 
-If `glistix new` didn't automatically do this for you, follow the steps below.
-
-1. Create a folder named `external` in your repository.
-
-2. Run the command below to add this repository as a submodule. Whenever you clone your repository again, run `git submodule init` to restore the submodule's contents.
-
-```sh
-git submodule add --name stdlib -- https://github.com/Glistix/stdlib external/stdlib
-```
-
-3. Make `gleam_stdlib` a path dependency to the cloned repository instead of a Hex dependency.
-To do this, edit the `[dependencies]` section in `gleam.toml` as below:
+For existing projects, you can use this fork by running `glistix add gleam_stdlib` followed by adding the line below to your Glistix project's `gleam.toml` file (as of Glistix v0.7.0):
 
 ```toml
-[dependencies]
-gleam_stdlib = { path = "./external/stdlib" }
+[glistix.preview.patch]
+# ... Existing patches ...
+# Add this line:
+gleam_stdlib = { name = "glistix_stdlib", version = ">= 0.34.0 and < 2.0.0" }
 ```
 
-4. Hex doesn't allow local dependencies on packages. Therefore, as a temporary workaround,
-**add the following section to `gleam.toml` so you can publish to Hex:**
+This ensures transitive dependencies on `gleam_stdlib` will also use the patch.
 
-```toml
-[glistix.preview.hex-patch]
-gleam_stdlib = ">= 0.34.0 and < 2.0.0"
-```
+Keep in mind that patches only have an effect on end users' projects - they are ignored when publishing a package to Hex, so end users are responsible for any patches their dependencies may need.
 
-5. Note that you may also have to add the section below if you use other submodules which also depend on stdlib
-(otherwise you might have conflicts between different patches) - again, a temporary workaround for now:
-
-```toml
-[glistix.preview]
-local-overrides = ["gleam_stdlib"]
-```
-
-6. Done, your code will now compile, and your dependencies will use the ported version of the standard library.
-
-(**Note:** You may have to update your `flake.nix` as well to add the repository as a Flake input and pass it
-to the `submodules` list given to `loadGlistixPackage` so that building through Nix works as well.
-This is also done by default for `stdlib` by `glistix new`, but is something to consider when adding other
-Git submodules as dependencies of your project.)
-
-The same procedure is done for any Nix ports you may want to use in your project, e.g. [`json`](https://github.com/Glistix/json), [`birl`](https://github.com/Glistix/birl) and so on.
-
-It is expected that this procedure will become simpler in the future, once Gleam gets Git dependencies and built-in patching
-of dependencies.
+If your project or package is only meant for the Nix target, you can also use this fork in `[dependencies]` directly through `glistix add glistix_stdlib` in order to not rely on patching. However, the patch above is still going to be necessary for end users to fix other dependencies which depend on `gleam_stdlib`.
 
 ## Inconsistencies and missing features on Nix
 

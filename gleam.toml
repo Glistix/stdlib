@@ -1,11 +1,15 @@
-name = "gleam_stdlib"
 version = "0.37.0"
+name = "glistix_stdlib"
 gleam = ">= 0.32.0"
 licences = ["Apache-2.0"]
 description = "A fork of the Gleam standard library for Glistix's Nix target"
 
 repository = { type = "github", user = "glistix", repo = "stdlib" }
-links = []
+links = [
+  { title = "Website", href = "https://glistix.github.io/book" },
+  { title = "Compiler", href = "https://github.com/glistix/glistix" },
+  { title = "Sponsor", href = "https://github.com/sponsors/PgBiel" },
+]
 
 [javascript.deno]
 allow_read = [

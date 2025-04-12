@@ -81,16 +81,16 @@
         "systems": "systems"
       },
       "locked": {
-        "lastModified": 1737328970,
-        "narHash": "sha256-8rODOgggZFNDHJ1e3HgE0vNeE5rctEPh+q44lwJet4s=",
+        "lastModified": 1742066068,
+        "narHash": "sha256-DYLZU5fh4QU939T7Vh+6Pscu6DUUAMBiUuXsqnA+dGM=",
         "owner": "glistix",
         "repo": "glistix",
-        "rev": "a6e416d5ea500a2183279b0989b4c5c7ebdc1666",
+        "rev": "78ed20c1347e78d081bcd337ef8ef6191902785f",
         "type": "github"
       },
       "original": {
         "owner": "glistix",
-        "ref": "v0.6.0",
+        "ref": "v0.7.0",
         "repo": "glistix",
         "type": "github"
       }

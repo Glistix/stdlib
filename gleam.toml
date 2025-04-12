@@ -1,4 +1,4 @@
-name = "gleam_stdlib"
+name = "glistix_stdlib"
 version = "0.38.0"
 gleam = ">= 0.32.0"
 licences = ["Apache-2.0"]

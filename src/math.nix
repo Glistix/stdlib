@@ -1,5 +1,5 @@
 # nix-math (credit to xddxdd)
-# https://github.com/xddxdd/nix-math/commit/f75dc262fc441391b4d19306b7f233bbb4fc3b3a
+# https://github.com/xddxdd/nix-math/commit/d35b27fae1ab7fee0065e3f6b149409c110f110a
 { lib, ... }:
 rec {
   inherit (builtins) floor ceil;

@@ -18,12 +18,12 @@ jobs:
       - name: Nix cache
         uses: nix-community/cache-nix-action@135667ec418502fa5a3598af6fb9eb733888ce6a
         with:
-          # restore and save a cache using this key
+          # restore and save a cache using this key.
           primary-key: nix-${{ runner.os }}-${{ hashFiles('**/*.nix', '**/flake.lock') }}
-          # if there's no cache hit, restore a cache by this prefix
+          # if there's no cache hit, restore a cache by this prefix.
           restore-prefixes-first-match: nix-${{ runner.os }}-
           # collect garbage until the Nix store size (in bytes) is at most this number
-          # before trying to save a new cache
+          # before trying to save a new cache.
           gc-max-store-size-linux: 2G
       - name: Ensure flake.lock was committed
         run: ls flake.lock

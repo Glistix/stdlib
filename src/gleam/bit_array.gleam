@@ -133,7 +133,7 @@ pub fn base64_encode(input: BitArray, padding: Bool) -> String {
 
 @external(erlang, "base64", "encode")
 @external(javascript, "../gleam_stdlib.mjs", "encode64")
-@external(nix, "../gleam_stdlib.nix", "unimplemented")
+@external(nix, "../gleam_stdlib.nix", "bit_array_encode64")
 fn encode64(a: BitArray) -> String
 
 /// Decodes a base 64 encoded string into a `BitArray`.
@@ -148,7 +148,7 @@ pub fn base64_decode(encoded: String) -> Result(BitArray, Nil) {
 
 @external(erlang, "gleam_stdlib", "base_decode64")
 @external(javascript, "../gleam_stdlib.mjs", "decode64")
-@external(nix, "../gleam_stdlib.nix", "unimplemented")
+@external(nix, "../gleam_stdlib.nix", "bit_array_decode64")
 fn decode64(a: String) -> Result(BitArray, Nil)
 
 /// Encodes a `BitArray` into a base 64 encoded string with URL and filename safe alphabet.

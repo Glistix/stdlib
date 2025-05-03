@@ -15,9 +15,10 @@ jobs:
         with:
           submodules: "recursive"
       - uses: nixbuild/nix-quick-install-action@8505cd40ae3d4791ca658f2697c5767212e5ce71 # v30
-        nix_conf: |
-          keep-env-derivations = true
-          keep-outputs = true
+        with:
+          nix_conf: |
+            keep-env-derivations = true
+            keep-outputs = true
       - name: Nix cache
         uses: nix-community/cache-nix-action@135667ec418502fa5a3598af6fb9eb733888ce6a # v6
         with:

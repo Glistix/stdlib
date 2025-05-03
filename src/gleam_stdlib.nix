@@ -855,6 +855,114 @@ let
       let
         result = byteArrayToUtf8String array;
       in if builtins.isNull result then Error Nil else Ok result;
+
+  alpha64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+  reverse64 = { "A" = 0; "B" = 1; "C" = 2; "D" = 3; "E" = 4; "F" = 5; "G" = 6; "H" = 7; "I" = 8; "J" = 9; "K" = 10; "L" = 11; "M" = 12; "N" = 13; "O" = 14; "P" = 15; "Q" = 16; "R" = 17; "S" = 18; "T" = 19; "U" = 20; "V" = 21; "W" = 22; "X" = 23; "Y" = 24; "Z" = 25; "a" = 26; "b" = 27; "c" = 28; "d" = 29; "e" = 30; "f" = 31; "g" = 32; "h" = 33; "i" = 34; "j" = 35; "k" = 36; "l" = 37; "m" = 38; "n" = 39; "o" = 40; "p" = 41; "q" = 42; "r" = 43; "s" = 44; "t" = 45; "u" = 46; "v" = 47; "w" = 48; "x" = 49; "y" = 50; "z" = 51; "0" = 52; "1" = 53; "2" = 54; "3" = 55; "4" = 56; "5" = 57; "6" = 58; "7" = 59; "8" = 60; "9" = 61; "+" = 62; "/" = 63; "=" = null; };
+  bit_array_encode64 = array:
+    let
+      bytes = array.buffer;
+      amount = builtins.length bytes;
+      rem3 = amount - 3 * (amount / 3);
+      charAt = n: builtins.substring n 1;
+    in
+    # multiples of 8 bits mod 6:
+    # 8 * 1 = 8 = (mod 6) 2
+    # * 2 = (mod 6) 10 = -2 = 4
+    # * 3 = 0
+    # * 4 = 8 = 2 ...
+    # =>
+    # rem3 = 0 => bits are divisible by 6
+    # rem3 = 1 => 2 extra bits (missing at least 4 bits)
+    # rem3 = 2 => 4 extra bits (missing at least 2 bits)
+    #
+    # Go in groups of 3 bytes (24 bits) => 4 sextets => 4 base64 digits
+    builtins.concatStringsSep "" (builtins.genList (groupIndex:
+      let
+        start = groupIndex * 3;
+        firstByte = builtins.elemAt bytes start;
+        firstSextet = firstByte / 4; # right-shift by 2 bits => first 6 digits
+      in
+        if start + 1 >= amount # 1 byte in group of 3 bytes
+        then
+          let
+            # have 8 bits, remainder: 2
+            # 4 bits missing for multiple of 6
+            # b1 & 0b11 => take the last two digits from first byte
+            # << 4 => 2 digits + 4 zeroes
+            secondSextet = builtins.bitAnd firstByte 3 * 16;
+          # pad twice
+          # third and fourth sextets do not exist => padding
+          in charAt firstSextet alpha64 + charAt secondSextet alpha64 + "=="
+        else # at least 2 bytes in group
+          let
+            # have 16 bits, remainder: 4
+            # 2 bits missing for multiple of 6
+            # b1 & 0b11 => take the last two bits from first byte
+            # b2 >> 4 => add to the first four in the second byte
+            secondByte = builtins.elemAt bytes (start + 1);
+            secondSextet = builtins.bitAnd firstByte 3 * 16 + secondByte / 16;
+          in
+            if start + 2 >= amount # 2 bytes in group of 3
+            then
+              let
+                # b2 & 0b1111 => last four bits from second byte
+                # << 2 => add two bits, total 6
+                thirdSextet = builtins.bitAnd secondByte 15 * 4;
+              in
+              charAt firstSextet alpha64 + charAt secondSextet alpha64 + charAt thirdSextet alpha64 + "="
+            else
+              let
+                # b2 & 0b1111 => last four bits from second byte
+                # b3 >> 6 => first two bits from third byte, total 6 bits
+                thirdByte = builtins.elemAt bytes (start + 2);
+                thirdSextet = builtins.bitAnd secondByte 15 * 4 + thirdByte / 64;
+                # b3 & 0b111111 => last six bits from third byte
+                fourthSextet = builtins.bitAnd thirdByte 63;
+              in
+              charAt firstSextet alpha64 + charAt secondSextet alpha64 + charAt thirdSextet alpha64 + charAt fourthSextet alpha64)
+      (amount / 3 + (if rem3 == 0 then 0 else 1)));
+
+  bit_array_decode64 = str:
+    let
+      amount = builtins.stringLength str;
+      rem4 = amount - 4 * (amount / 4);
+      charAt = n: builtins.substring n 1;
+    in
+    # each group of 4 sextets holds up to 3 bytes
+    # TODO: errors
+    Ok (toBitArray (builtins.concatLists (builtins.genList (groupIndex:
+      let
+        start = groupIndex * 4;
+        firstSextet = reverse64.${charAt start str} or 0;
+        secondSextet = if start + 1 < amount then reverse64.${charAt (start + 1) str} or 0 else 0;
+        thirdSextet = if start + 2 < amount then reverse64.${charAt (start + 2) str} or 0 else null;
+        fourthSextet = if start + 3 < amount then reverse64.${charAt (start + 3) str} or 0 else null;
+
+        # First 6 bets from sextet 1 (<< 2 to give space), last 2 from beginning of sextet 2 (>> 4)
+        # Total 8 bits
+        firstByte = firstSextet * 4 + secondSextet / 16;
+      in
+        if thirdSextet == null # string too short, or this is padding
+        then
+          # reached last byte of group
+          [ firstByte ]
+        else # at least 2 bytes in group
+          let
+            # First 4 bits from tail of sextet 2 (& 0b1111 << 4), last four from head of sextet 3 (>> 2)
+            # Total 8 bits
+            secondByte = builtins.bitAnd secondSextet 15 * 16 + thirdSextet / 4;
+          in
+            if fourthSextet == null
+            then
+              [ firstByte secondByte ]
+            else
+              let
+                # First 2 bits from tail of sextet 3 (& 0b11 << 6), last 6 from sextet 4
+                # Total 8 bits
+                thirdByte = builtins.bitAnd thirdSextet 3 * 64 + fourthSextet;
+              in
+              [ firstByte secondByte thirdByte ])
+      (amount / 4 + (if rem4 == 0 then 0 else 1)))));
 in
   {
     inherit
@@ -938,6 +1046,8 @@ in
       bit_array_slice
       bit_array_from_string
       bit_array_to_string
+      bit_array_encode64
+      bit_array_decode64
       new_map
       map_size
       map_get
